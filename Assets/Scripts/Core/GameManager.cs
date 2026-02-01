@@ -363,8 +363,29 @@ public class GameManager : MonoBehaviour
 
     /// Pausa o reanuda el juego.
 
+    /// Toggle para UI (Button.onClick) - SIN parámetros
+    public void TogglePause()
+    {
+        // No permitimos pausar en GameOver o en el menú de continue
+        if (State == GameState.GameOver || State == GameState.GameOverPending) return;
+
+        bool shouldPause = State != GameState.Paused;
+        Pause(shouldPause);
+    }
+
+    /// Pausa o reanuda el juego (modo correcto)
     public void Pause(bool paused)
     {
-        State = paused ? GameState.Paused : GameState.Playing;
+        if (paused)
+        {
+            State = GameState.Paused;
+            Time.timeScale = 0f; // ✅ congela todo lo que depende del deltaTime
+        }
+        else
+        {
+            State = GameState.Playing;
+            Time.timeScale = 1f;
+        }
     }
+
 }

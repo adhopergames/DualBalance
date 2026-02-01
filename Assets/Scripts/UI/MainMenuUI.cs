@@ -4,29 +4,71 @@ using UnityEngine.SceneManagement;
 public class MainMenuUI : MonoBehaviour
 {
     [Header("Scenes")]
-    [Tooltip("Nombre exacto de la escena del juego en Build Settings.")]
     public string gameSceneName = "Game";
 
-    [Tooltip("Nombre exacto de la escena del menú en Build Settings.")]
-    public string menuSceneName = "Menu";
+    [Header("Panels")]
+    public GameObject panelMainMenu;
+    public GameObject panelHistoria;
+    public GameObject panelLogros;
+    public GameObject panelAjustes;
 
-    /// Play: carga la escena del juego desde cero.
+    private GameObject currentPanel;
+
+    private void Start()
+    {
+        // Al iniciar, mostramos el menú principal
+        ShowPanel(panelMainMenu);
+    }
+
+    // -------------------------
+    // BOTONES
+    // -------------------------
 
     public void OnPlayPressed()
     {
-        Time.timeScale = 1f; // seguridad
+        Time.timeScale = 1f;
         SceneManager.LoadScene(gameSceneName);
+    }
+
+    public void OnHistoriaPressed()
+    {
+        ShowPanel(panelHistoria);
     }
 
     public void OnAchievementsPressed()
     {
-        Debug.Log("Achievements: pendiente de implementar UI");
+        ShowPanel(panelLogros);
     }
 
-    /// Cerrar app (en editor no cierra).
+    public void OnSettingsPressed()
+    {
+        ShowPanel(panelAjustes);
+    }
+
+    public void OnBackPressed()
+    {
+        ShowPanel(panelMainMenu);
+    }
 
     public void OnQuitPressed()
     {
         Application.Quit();
+    }
+
+    // -------------------------
+    // CORE
+    // -------------------------
+
+    private void ShowPanel(GameObject panelToShow)
+    {
+        if (panelToShow == null) return;
+
+        // Apaga el actual
+        if (currentPanel != null)
+            currentPanel.SetActive(false);
+
+        // Enciende el nuevo
+        panelToShow.SetActive(true);
+        currentPanel = panelToShow;
     }
 }
