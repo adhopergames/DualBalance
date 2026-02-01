@@ -14,13 +14,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::GameConfig
   baseWorldSpeed: 4
   difficultyRamp: 0.1
-  maxWorldSpeed: 12
+  maxWorldSpeed: 11.5
   baseSpawnInterval: 1.55
   spawnIntervalRamp: 0.01
-  minSpawnInterval: 0.47
+  minSpawnInterval: 0.5
   maxEnergy: 100
   idleDrainPerSecond: 0.05
-  moveDrain: 1.5
+  moveDrain: 1
   attackDrain: 6
   orbAmount: 15
   dualOrbAmount: 10
