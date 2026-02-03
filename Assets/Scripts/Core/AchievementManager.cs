@@ -236,7 +236,7 @@ public class AchievementManager : MonoBehaviour
             id = "max_speed",
             title = "Velocidad Máxima",
             desc = "Alcanza 4000 de score (Best).",
-            condition = () => Best() >= 4000
+            condition = () => Best() >= 3000
         });
 
         achievements.Add(new Achievement
@@ -266,6 +266,18 @@ public class AchievementManager : MonoBehaviour
             condition = () => GetUnlockedCount() >= 10
         });
     }
+    public static List<AchievementInfo> GetAll()
+    {
+        if (Instance == null) return new List<AchievementInfo>();
+
+        var list = new List<AchievementInfo>(Instance.achievements.Count);
+        foreach (var a in Instance.achievements)
+        {
+            list.Add(new AchievementInfo(a.id, a.title, a.desc));
+        }
+        return list;
+    }
+
 
     [ContextMenu("DEBUG/Clear Achievements")]
     public void ClearAllAchievements()
@@ -280,4 +292,19 @@ public class AchievementManager : MonoBehaviour
     }
 
 
+}
+
+[Serializable]
+public struct AchievementInfo
+{
+    public string id;
+    public string title;
+    public string desc;
+
+    public AchievementInfo(string id, string title, string desc)
+    {
+        this.id = id;
+        this.title = title;
+        this.desc = desc;
+    }
 }
