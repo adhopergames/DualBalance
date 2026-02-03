@@ -58,6 +58,146 @@ MonoBehaviour:
     m_Localized: Collide at least once with a wall of Light and one of Darkness.
     m_Metadata:
       m_Items: []
+  - m_Id: 11
+    m_Localized: Furia Elemental
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12
+    m_Localized: Use 16 Light attacks and 16 Dark attacks.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 13
+    m_Localized: First Attack
+    m_Metadata:
+      m_Items: []
+  - m_Id: 14
+    m_Localized: Perform your first attack.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 15
+    m_Localized: Light Specialist
+    m_Metadata:
+      m_Items: []
+  - m_Id: 16
+    m_Localized: Perform 30 Light attacks.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 17
+    m_Localized: Dark Mastery
+    m_Metadata:
+      m_Items: []
+  - m_Id: 18
+    m_Localized: Perform 30 Dark attacks.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 19
+    m_Localized: Perfect Balance
+    m_Metadata:
+      m_Items: []
+  - m_Id: 20
+    m_Localized: Perform at least 20 Light and 20 Dark attacks with near-perfect
+      balance.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 21
+    m_Localized: Hard Lesson
+    m_Metadata:
+      m_Items: []
+  - m_Id: 22
+    m_Localized: Die for the first time.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 23
+    m_Localized: Learning to Fly
+    m_Metadata:
+      m_Items: []
+  - m_Id: 24
+    m_Localized: Die 5 times.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 25
+    m_Localized: Walls Do Not Forgive
+    m_Metadata:
+      m_Items: []
+  - m_Id: 26
+    m_Localized: Die 5 times due to elemental walls.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 27
+    m_Localized: Obstacles of Fate
+    m_Metadata:
+      m_Items: []
+  - m_Id: 28
+    m_Localized: Die 5 times due to neutral obstacles.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 29
+    m_Localized: First Long Flight
+    m_Metadata:
+      m_Items: []
+  - m_Id: 30
+    m_Localized: Reach a best score of 1000.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 31
+    m_Localized: Maximum Speed
+    m_Metadata:
+      m_Items: []
+  - m_Id: 32
+    m_Localized: Reach a best score of 3000.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 33
+    m_Localized: Beyond Balance
+    m_Metadata:
+      m_Items: []
+  - m_Id: 34
+    m_Localized: Reach a best score of 5000.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 35
+    m_Localized: Unstoppable
+    m_Metadata:
+      m_Items: []
+  - m_Id: 36
+    m_Localized: Destroy 50 elemental walls in total.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 37
+    m_Localized: Master of Dual Balance
+    m_Metadata:
+      m_Items: []
+  - m_Id: 38
+    m_Localized: Unlock 10 achievements.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 39
+    m_Localized: ???
+    m_Metadata:
+      m_Items: []
+  - m_Id: 40
+    m_Localized: Locked achievement
+    m_Metadata:
+      m_Items: []
+  - m_Id: 41
+    m_Localized: "In a world where controlling the elements is something ordinary,
+      most people can only master <color=#EAEAEA><b>one</b></color>.\r\n\r\n<b>Hawtep</b>
+      was born different.  \r\nHe possesses a rare ability: controlling <color=#FFD369><b>light</b></color>
+      and <color=#6C63FF><b>darkness</b></color>  \r\nat the same time.\r\n\r\n---\r\n\r\nThat
+      rarity caught the attention of a  \r\n<color=#FF6B6B><b>secret agency</b></color>.\r\n\r\nFearing
+      his power could break the <color=#EAEAEA><b>balance</b></color> of the world,
+      they <b>captured</b> him and began experimenting  to understand and <b>control</b>
+      his gift.\r\n\r\n---\r\n\r\nOne day, a <color=#FF6B6B><b>mistake</b></color>
+      changed everything.\r\n\r\nDuring a moment of negligence in the laboratory,
+      Hawtep managed to <color=#6BCF9B><b>escape</b></color>. Amid the chaos, an
+      experimental dimensional machine activated prematurely and became <color=#FF6B6B><b>unstable</b></color>.\r\n\r\n---\r\n\r\nThe
+      portal hurled him into a <color=#FF6B6B><b>corrupted dimension</b></color>,
+      where <color=#FFD369><b>light</b></color> and <color=#6C63FF><b>darkness</b></color>
+      exist in twisted forms.\r\n\r\nNow, Hawtep must <color=#EAEAEA><b>fly</b></color>,
+      <color=#FF6B6B><b>survive</b></color>, and <color=#6BCF9B><b>find a way out</b></color>,
+      before that world finally <color=#FF6B6B><b>consumes him</b></color>.\r\n"
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
     RefIds: []
