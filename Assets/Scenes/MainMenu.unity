@@ -4568,7 +4568,9 @@ MonoBehaviour:
   itemPrefab: {fileID: 3593973358728619089, guid: c9b6b46ab6ad8694eb917e3e2a1a4e98, type: 3}
   icons:
   - id: between_light_shadow
-    icon: {fileID: 21300000, guid: 3b431fc9b66a5b2478091bf16b2da0fb, type: 3}
+    icon: {fileID: 21300000, guid: 30296b410ba294f48b75b629e81f7a0a, type: 3}
+  - id: furia_elemental
+    icon: {fileID: -896629326404070043, guid: 5524e51f69704da4babdf06d40917efd, type: 3}
 --- !u!1 &1154005533
 GameObject:
   m_ObjectHideFlags: 0
