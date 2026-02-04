@@ -139,7 +139,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 31
-    m_Localized: "Velocidad M\uFFFDxima"
+    m_Localized: "Velocidad M\xE1xima"
     m_Metadata:
       m_Items: []
   - m_Id: 32
@@ -147,7 +147,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 33
-    m_Localized: "M\uFFFDs All\uFFFD del Equilibrio"
+    m_Localized: "M\xE1s All\xE1 del Equilibrio"
     m_Metadata:
       m_Items: []
   - m_Id: 34

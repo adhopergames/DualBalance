@@ -485,6 +485,6 @@ MonoBehaviour:
   icon: {fileID: 627111911394266335}
   titleLocalized: {fileID: 8081712133668999691}
   descLocalized: {fileID: 3220691073790865707}
-  lockedSprite: {fileID: 3949734063210119213, guid: 1c32db7131cc78c4fba054cc15476d81, type: 3}
-  lockedTint: {r: 1, g: 0, b: 0, a: 0.6}
+  lockedSprite: {fileID: 21300000, guid: a242be2f77838134bb20d69f3df52ae3, type: 3}
+  lockedTint: {r: 1, g: 1, b: 1, a: 0.6}
   tableName: TablaIdiomas
