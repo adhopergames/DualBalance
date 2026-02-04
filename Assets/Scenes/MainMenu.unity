@@ -4570,7 +4570,31 @@ MonoBehaviour:
   - id: between_light_shadow
     icon: {fileID: 21300000, guid: 30296b410ba294f48b75b629e81f7a0a, type: 3}
   - id: furia_elemental
-    icon: {fileID: -896629326404070043, guid: 5524e51f69704da4babdf06d40917efd, type: 3}
+    icon: {fileID: 21300000, guid: 5524e51f69704da4babdf06d40917efd, type: 3}
+  - id: first_attack
+    icon: {fileID: 21300000, guid: 011b255a3c2e4c04987469617974391c, type: 3}
+  - id: light_specialist
+    icon: {fileID: 21300000, guid: f4d4ee49235c3cf4cb99aee418b10cb2, type: 3}
+  - id: dark_mastery
+    icon: {fileID: 21300000, guid: c2593e5479bf3c6428e059ae81a7bf40, type: 3}
+  - id: perfect_balance
+    icon: {fileID: 21300000, guid: e9a993dc9b69f2446b2126a7bf1ec1ba, type: 3}
+  - id: first_death
+    icon: {fileID: 21300000, guid: 369676621e6be7545b5eba73aca612cf, type: 3}
+  - id: learning_to_fly
+    icon: {fileID: 21300000, guid: 10bc74b4c0e4e08458485070e21ff8e6, type: 3}
+  - id: walls_do_not_forgive
+    icon: {fileID: 21300000, guid: d7f03a0f657576845bb54af7ff64d755, type: 3}
+  - id: fate_obstacles
+    icon: {fileID: 21300000, guid: 8bea334f2d622234dab04b295adfc3f8, type: 3}
+  - id: long_first_flight
+    icon: {fileID: 21300000, guid: b29b1604c8bed1445b39d3502ac521f6, type: 3}
+  - id: long_first_flight
+    icon: {fileID: 21300000, guid: b29b1604c8bed1445b39d3502ac521f6, type: 3}
+  - id: max_speed
+    icon: {fileID: 21300000, guid: fb5ad6bf6087cbf4ba0bb861a35d8063, type: 3}
+  - id: beyond_balance
+    icon: {fileID: 21300000, guid: fe476e4d72d7cb543bfe7ef5edd064e1, type: 3}
 --- !u!1 &1154005533
 GameObject:
   m_ObjectHideFlags: 0

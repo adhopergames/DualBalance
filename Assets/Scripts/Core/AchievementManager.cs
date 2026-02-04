@@ -207,7 +207,7 @@ public class AchievementManager : MonoBehaviour
         achievements.Add(new Achievement
         {
             id = "walls_do_not_forgive",
-            title = "Las Paredes No Perdona",
+            title = "Las Paredes No Perdonan",
             desc = "Muere 5 veces por paredes elementales.",
             condition = () => StatsManager.GetDeathsWall() >= 5
         });
@@ -235,7 +235,7 @@ public class AchievementManager : MonoBehaviour
         {
             id = "max_speed",
             title = "Velocidad Máxima",
-            desc = "Alcanza 4000 de score (Best).",
+            desc = "Alcanza 3000 de score (Best).",
             condition = () => Best() >= 3000
         });
 
