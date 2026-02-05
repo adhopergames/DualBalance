@@ -13,22 +13,22 @@ MonoBehaviour:
   m_Name: GameConfig
   m_EditorClassIdentifier: Assembly-CSharp::GameConfig
   baseWorldSpeed: 4
-  difficultyRamp: 0.1
-  maxWorldSpeed: 11.5
+  difficultyRamp: 0.065
+  maxWorldSpeed: 10.3
   baseSpawnInterval: 1.55
   spawnIntervalRamp: 0.01
-  minSpawnInterval: 0.5
+  minSpawnInterval: 0.8
   maxEnergy: 100
   idleDrainPerSecond: 0.05
   moveDrain: 1
-  attackDrain: 6
-  orbAmount: 15
-  dualOrbAmount: 10
+  attackDrain: 5
+  orbAmount: 20
+  dualOrbAmount: 15
   attackRangeBelowPlayer: 1
   attackRangeAbovePlayer: 8
-  elementalWallChanceStart: 0.07
-  elementalWallChanceEnd: 0.21
-  orbChance: 0.1
+  elementalWallChanceStart: 0.06
+  elementalWallChanceEnd: 0.2
+  orbChance: 0.06
   orbBaseWeight: 0.93
-  orbBiasWeight: 1.3
+  orbBiasWeight: 1.2
   dualOrbWeight: 0.23

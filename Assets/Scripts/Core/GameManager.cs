@@ -62,7 +62,7 @@ public class GameManager : MonoBehaviour
 
     [Header("Revive Grace Period")]
     [Tooltip("Segundos de invencibilidad tras revivir.")]
-    public float reviveInvulnerabilitySeconds = 1.5f;
+    public float reviveInvulnerabilitySeconds = 2.5f;
 
     /// True mientras el jugador está protegido tras revivir.
     /// Úsalo en el script de colisiones para NO morir durante este tiempo.
@@ -75,6 +75,21 @@ public class GameManager : MonoBehaviour
     // Snapshot en memoria para revivir (no se guarda en PlayerPrefs)
     private RunSnapshot snapshot;
     private bool hasSnapshot;
+
+    // -------------------------
+    // SCORE MULTIPLIER (Orbs)
+    // -------------------------
+
+    [Header("Score Multiplier (Orbs)")]
+    [Tooltip("Multiplicador actual aplicado al score por segundo. 1 = normal.")]
+    [SerializeField] private float scoreMultiplier = 1f;
+
+    [Tooltip("Tiempo restante (segundos) del multiplicador actual.")]
+    [SerializeField] private float scoreMultiplierRemaining = 0f;
+
+    // (Opcional) Evento para UI si quieres mostrar "x2 12s"
+    public event Action<float, float> OnScoreMultiplierChanged; // (mult, remaining)
+
 
     // Estructura interna con lo mínimo necesario para “seguir donde iba”
     [Serializable]
@@ -109,6 +124,13 @@ public class GameManager : MonoBehaviour
         State = GameState.Playing;
 
         // -------------------------
+        // Reset de stats POR RUN
+        // -------------------------
+        // ✅ Importante: esto NO borra PlayerPrefs, solo contadores temporales de la partida.
+        StatsManager.ResetRunStats();
+
+
+        // -------------------------
         // Reset de run (Retry / volver a jugar)
         // -------------------------
         continuesUsed = 0;
@@ -122,9 +144,27 @@ public class GameManager : MonoBehaviour
         if (State != GameState.Playing) return;
 
         ElapsedTime += Time.deltaTime;
-        Score += scorePerSecond * Time.deltaTime;
 
+        // ✅ Si hay multiplicador activo, reducimos el tiempo restante
+        if (scoreMultiplierRemaining > 0f)
+        {
+            scoreMultiplierRemaining -= Time.deltaTime; // depende del juego (si pausas, se pausa también)
+            if (scoreMultiplierRemaining <= 0f)
+            {
+                // ✅ Se acabó el buff: volver a normal
+                scoreMultiplierRemaining = 0f;
+                scoreMultiplier = 1f;
+
+                // (Opcional) avisar UI
+                OnScoreMultiplierChanged?.Invoke(scoreMultiplier, scoreMultiplierRemaining);
+            }
+        }
+
+        // ✅ Score por segundo * multiplicador actual
+        Score += scorePerSecond * scoreMultiplier * Time.deltaTime;
+        print(Score);
     }
+
 
 
     /// Velocidad actual del mundo (aumenta con el tiempo y se limita por maxWorldSpeed).
@@ -245,6 +285,11 @@ public class GameManager : MonoBehaviour
         Score = snapshot.score;
         ElapsedTime = snapshot.elapsedTime;
 
+        // ✅ Al revivir, dejamos el score multiplier en normal (evita exploits/bugs)
+        scoreMultiplier = 1f;
+        scoreMultiplierRemaining = 0f;
+        OnScoreMultiplierChanged?.Invoke(scoreMultiplier, scoreMultiplierRemaining);
+
         // Restauramos energías
         playerEnergy.lightEnergy = snapshot.lightEnergy;
         playerEnergy.darkEnergy = snapshot.darkEnergy;
@@ -295,22 +340,20 @@ public class GameManager : MonoBehaviour
         hasSnapshot = true;
     }
 
-
-    /// Invencibilidad temporal tras revivir.
-    /// Usamos tiempo real (unscaled) porque venimos de Time.timeScale = 0.
-
+    // Invencibilidad temporal tras revivir.
+    // ✅ Robustez móvil: WaitForSecondsRealtime NO se rompe por un "delta gigante" al volver de Ads.
     private System.Collections.IEnumerator ReviveInvulnerabilityRoutine()
     {
-        float t = reviveInvulnerabilitySeconds;
+        // Nos aseguramos que el flag esté activo
+        IsReviveInvulnerable = true;
 
-        while (t > 0f)
-        {
-            t -= Time.unscaledDeltaTime;
-            yield return null;
-        }
+        // ✅ Espera tiempo REAL (ignora Time.timeScale y no explota por pausas largas)
+        yield return new WaitForSecondsRealtime(reviveInvulnerabilitySeconds);
 
+        // Se acaba la invulnerabilidad
         IsReviveInvulnerable = false;
     }
+
 
 
     /// Limpia obstáculos/paredes cerca del jugador (zona segura).
@@ -357,8 +400,13 @@ public class GameManager : MonoBehaviour
     public void Restart()
     {
         Time.timeScale = 1f;
+
+        // ✅ Reiniciamos stats de run antes de recargar
+        StatsManager.ResetRunStats();
+
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
+
 
 
     /// Pausa o reanuda el juego.
@@ -387,5 +435,33 @@ public class GameManager : MonoBehaviour
             Time.timeScale = 1f;
         }
     }
+
+    /// Activa un multiplicador temporal de score.
+    /// Regla: si el nuevo multiplicador es mayor, reemplaza.
+    /// Si es igual, refresca la duración.
+    /// Si es menor, se ignora.
+    public void ApplyScoreMultiplier(float multiplier, float durationSeconds)
+    {
+        // Seguridad
+        if (multiplier <= 1f || durationSeconds <= 0f) return;
+
+        // ✅ Si el nuevo buff es más fuerte, reemplazamos
+        if (multiplier > scoreMultiplier)
+        {
+            scoreMultiplier = multiplier;                 // nuevo multiplicador
+            scoreMultiplierRemaining = durationSeconds;   // nueva duración
+        }
+        // ✅ Si es el mismo multiplicador, refrescamos duración
+        else if (Mathf.Approximately(multiplier, scoreMultiplier))
+        {
+            scoreMultiplierRemaining = durationSeconds;
+        }
+        // ✅ Si es más débil, lo ignoramos
+        // else { no hace nada }
+
+        // (Opcional) avisar UI
+        OnScoreMultiplierChanged?.Invoke(scoreMultiplier, scoreMultiplierRemaining);
+    }
+
 
 }
