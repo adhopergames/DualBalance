@@ -178,12 +178,15 @@ public class AchievementManager : MonoBehaviour
             desc = "Lanza al menos 20 ataques de Luz y 20 de Oscuridad (casi igualados).",
             condition = () =>
             {
-                int l = StatsManager.GetAttacksLight();
-                int d = StatsManager.GetAttacksDark();
+                // ✅ POR RUN: usamos contadores temporales (no los globales)
+                int l = StatsManager.GetRunAttacksLight();
+                int d = StatsManager.GetRunAttacksDark();
+
                 if (l < 20 || d < 20) return false;
                 return Mathf.Abs(l - d) <= 1;
             }
         });
+
 
         // -------------------------
         // MUERTES / APRENDIZAJE

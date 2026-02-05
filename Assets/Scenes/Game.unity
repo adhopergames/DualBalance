@@ -3168,6 +3168,7 @@ GameObject:
   - component: {fileID: 1690564208}
   - component: {fileID: 1690564209}
   - component: {fileID: 1690564210}
+  - component: {fileID: 1690564211}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -3462,7 +3463,22 @@ MonoBehaviour:
   lightTrail: {fileID: 1911955580}
   darkTrail: {fileID: 2070267614}
   disableWhenNotPlaying: 1
-  debugLogs: 1
+  debugLogs: 0
+--- !u!114 &1690564211
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1690564199}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1ea4db4948c539a4d88a74a3a4de96a4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerInvulnerabilityBlink
+  sprite: {fileID: 1690564204}
+  blinkSpeed: 10
+  minAlpha: 0.2
 --- !u!1 &1775390153
 GameObject:
   m_ObjectHideFlags: 0
@@ -8786,7 +8802,9 @@ MonoBehaviour:
   playerTransform: {fileID: 1690564205}
   maxContinuesPerRun: 1
   reviveClearRangeY: 8
-  reviveInvulnerabilitySeconds: 1.5
+  reviveInvulnerabilitySeconds: 3
+  scoreMultiplier: 1
+  scoreMultiplierRemaining: 0
 --- !u!4 &1913153543
 Transform:
   m_ObjectHideFlags: 0

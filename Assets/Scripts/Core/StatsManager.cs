@@ -100,6 +100,9 @@ public class StatsManager : MonoBehaviour
 
     public static void AddAttack(ElementType type)
     {
+        // -------------------------
+        // GLOBAL (persistente)
+        // -------------------------
         PlayerPrefs.SetInt(AttacksTotalKey, GetAttacksTotal() + 1);
 
         if (type == ElementType.Light)
@@ -109,9 +112,43 @@ public class StatsManager : MonoBehaviour
 
         PlayerPrefs.Save();
 
+        // -------------------------
+        // RUN (solo esta partida)
+        // -------------------------
+        runAttacksTotal++;
+
+        if (type == ElementType.Light)
+            runAttacksLight++;
+        else if (type == ElementType.Dark)
+            runAttacksDark++;
+
         // ✅ Chequear logros
         AchievementManager.TryCheckAll();
     }
+
+
+    // -------------------------
+    // Run Stats (NO PlayerPrefs)
+    // -------------------------
+    // ✅ Estos valores solo viven durante la partida actual.
+    // Se reinician al iniciar una nueva run (GameManager.Awake / Restart).
+    private static int runAttacksTotal = 0;
+    private static int runAttacksLight = 0;
+    private static int runAttacksDark = 0;
+
+    public static int GetRunAttacksTotal() => runAttacksTotal;
+    public static int GetRunAttacksLight() => runAttacksLight;
+    public static int GetRunAttacksDark() => runAttacksDark;
+
+    /// ✅ Reinicia contadores de la run actual (NO afecta los stats globales en PlayerPrefs).
+    /// Llamar al empezar una run nueva.
+    public static void ResetRunStats()
+    {
+        runAttacksTotal = 0;
+        runAttacksLight = 0;
+        runAttacksDark = 0;
+    }
+
 
     // -------------------------
     // Deaths
