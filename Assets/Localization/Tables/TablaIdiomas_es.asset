@@ -197,6 +197,18 @@ MonoBehaviour:
       salida</b></color>,  antes de que ese mundo termine por  <color=#FF6B6B><b>consumirlo</b></color>.\n"
     m_Metadata:
       m_Items: []
+  - m_Id: 1499620822159360
+    m_Localized: "\xBFQuieres abandonar el equilibrio?"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1499800007020544
+    m_Localized: Abandonar
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1499872719474688
+    m_Localized: Seguir jugando
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
     RefIds: []
