@@ -3511,6 +3511,7 @@ GameObject:
   - component: {fileID: 646930689}
   - component: {fileID: 646930688}
   - component: {fileID: 646930687}
+  - component: {fileID: 646930690}
   m_Layer: 5
   m_Name: SeguirJugandoBTN
   m_TagString: Untagged
@@ -3632,6 +3633,21 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 646930685}
   m_CullTransparentMesh: 1
+--- !u!114 &646930690
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 646930685}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5121e9629c3b2a242861e2e0ae100399, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SecondaryButtonAnimator
+  hoverScale: 1.1
+  pressedScale: 0.95
+  animationSpeed: 10
 --- !u!1 &656123161
 GameObject:
   m_ObjectHideFlags: 0
@@ -5136,7 +5152,7 @@ MonoBehaviour:
   m_fontSizeBase: 64
   m_fontWeight: 400
   m_enableAutoSizing: 1
-  m_fontSizeMin: 55
+  m_fontSizeMin: 45
   m_fontSizeMax: 64
   m_fontStyle: 1
   m_HorizontalAlignment: 2
@@ -5635,6 +5651,7 @@ GameObject:
   - component: {fileID: 1187720427}
   - component: {fileID: 1187720426}
   - component: {fileID: 1187720425}
+  - component: {fileID: 1187720428}
   m_Layer: 5
   m_Name: AbandonarBTN
   m_TagString: Untagged
@@ -5756,6 +5773,21 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1187720423}
   m_CullTransparentMesh: 1
+--- !u!114 &1187720428
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1187720423}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5121e9629c3b2a242861e2e0ae100399, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SecondaryButtonAnimator
+  hoverScale: 1.1
+  pressedScale: 0.95
+  animationSpeed: 10
 --- !u!1 &1226280755
 GameObject:
   m_ObjectHideFlags: 0
@@ -8753,7 +8785,7 @@ MonoBehaviour:
   m_fontSizeBase: 65
   m_fontWeight: 400
   m_enableAutoSizing: 1
-  m_fontSizeMin: 58
+  m_fontSizeMin: 40
   m_fontSizeMax: 65
   m_fontStyle: 1
   m_HorizontalAlignment: 2

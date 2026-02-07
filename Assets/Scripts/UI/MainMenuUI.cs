@@ -1,8 +1,9 @@
 using System.Collections;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
+using UnityEngine.InputSystem.LowLevel;
+using UnityEngine.SceneManagement;
 
 public class MainMenuUI : MonoBehaviour
 {
@@ -10,8 +11,6 @@ public class MainMenuUI : MonoBehaviour
     public string gameSceneName = "Game";
 
     [Header("UI Actions (NEW Input System)")]
-    [Tooltip("Referencia al action UI/Cancel (o Back) de tu Input Actions. " +
-             "Idealmente el mismo que usa el InputSystemUIInputModule.")]
     public InputActionReference backAction; // UI/Cancel
 
     [Header("Panels (RectTransform + CanvasGroup)")]
@@ -52,19 +51,57 @@ public class MainMenuUI : MonoBehaviour
     private bool isTransitioning;
     private bool isExitConfirmOpen;
 
-    // Si presionan back durante transición, lo aplicamos al terminar (no se pierde)
+    // Back robusto
+    private bool backQueued;
+    private bool backHooked;
     private bool pendingBack;
 
     private void OnEnable()
     {
-        if (backAction != null)
-            backAction.action.Enable();
+        HookBack(true);
+
+        // ✅ Captura low-level: evita que el primer Back “se pierda”
+        InputSystem.onEvent += OnInputEvent;
     }
 
     private void OnDisable()
     {
-        if (backAction != null)
-            backAction.action.Disable();
+        InputSystem.onEvent -= OnInputEvent;
+        HookBack(false);
+    }
+
+    private void HookBack(bool enable)
+    {
+        if (backAction == null || backAction.action == null) return;
+
+        if (enable)
+        {
+            backQueued = false;
+            pendingBack = false;
+        }
+
+        // Activa ActionMap completo si existe
+        if (backAction.action.actionMap != null)
+        {
+            if (enable) backAction.action.actionMap.Enable();
+            else backAction.action.actionMap.Disable();
+        }
+        else
+        {
+            if (enable) backAction.action.Enable();
+            else backAction.action.Disable();
+        }
+
+        if (enable && !backHooked)
+        {
+            backAction.action.performed += OnBackPerformed;
+            backHooked = true;
+        }
+        else if (!enable && backHooked)
+        {
+            backAction.action.performed -= OnBackPerformed;
+            backHooked = false;
+        }
     }
 
     private void Start()
@@ -91,23 +128,33 @@ public class MainMenuUI : MonoBehaviour
 
     private void Update()
     {
-        if (WasBackPressedThisFrame())
-        {
-            if (isTransitioning)
-                pendingBack = true;
-            else
-                HandleBackButton();
-        }
+        if (!backQueued) return;
+        backQueued = false;
+
+        if (isTransitioning)
+            pendingBack = true;
+        else
+            HandleBackButton();
     }
 
-    // ✅ Back/CANCEL robusto usando InputActionReference (UI/Cancel)
-    private bool WasBackPressedThisFrame()
+    private void OnBackPerformed(InputAction.CallbackContext ctx)
     {
-        if (backAction != null && backAction.action != null)
-            return backAction.action.WasPerformedThisFrame();
+        backQueued = true;
+    }
 
-        // Fallback por si no asignaste el action (sigue siendo New Input System)
-        return Keyboard.current != null && Keyboard.current.escapeKey.wasPressedThisFrame;
+    // ✅ Low-level: detecta Escape aunque Keyboard.current sea null (Android primer back)
+    private void OnInputEvent(InputEventPtr eventPtr, InputDevice device)
+    {
+        if (!eventPtr.IsA<StateEvent>() && !eventPtr.IsA<DeltaStateEvent>())
+            return;
+
+        // Si el dispositivo tiene KeyControl Escape, lo leemos
+        if (device is Keyboard kb)
+        {
+            // OJO: esto funciona incluso si Keyboard.current estaba null al inicio
+            if (kb.escapeKey.ReadValueFromEvent(eventPtr) > 0.5f)
+                backQueued = true;
+        }
     }
 
     private void HandleBackButton()
@@ -335,7 +382,6 @@ public class MainMenuUI : MonoBehaviour
         isTransitioning = false;
         transitionCo = null;
 
-        // ✅ Back presionado durante transición: ejecútalo ahora
         if (pendingBack)
         {
             pendingBack = false;
