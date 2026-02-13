@@ -75,7 +75,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 15
-    m_Localized: "Especialista Lum\xEDnico"
+    m_Localized: "Especialista Lum\uFFFDnico"
     m_Metadata:
       m_Items: []
   - m_Id: 16
@@ -123,11 +123,11 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 27
-    m_Localized: "Obst\xE1culos del Destino"
+    m_Localized: "Obst\uFFFDculos del Destino"
     m_Metadata:
       m_Items: []
   - m_Id: 28
-    m_Localized: "Muere 5 veces por obst\xE1culos neutrales."
+    m_Localized: "Muere 5 veces por obst\uFFFDculos neutrales."
     m_Metadata:
       m_Items: []
   - m_Id: 29
@@ -139,7 +139,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 31
-    m_Localized: "Velocidad M\xE1xima"
+    m_Localized: "Velocidad M\uFFFDxima"
     m_Metadata:
       m_Items: []
   - m_Id: 32
@@ -147,7 +147,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 33
-    m_Localized: "M\xE1s All\xE1 del Equilibrio"
+    m_Localized: "M\uFFFDs All\uFFFD del Equilibrio"
     m_Metadata:
       m_Items: []
   - m_Id: 34
@@ -180,33 +180,73 @@ MonoBehaviour:
       m_Items: []
   - m_Id: 41
     m_Localized: "En un mundo donde el control de los elementos es algo cotidiano, 
-      la mayor\xEDa de las personas solo puede dominar <color=#EAEAEA><b>uno</b></color>.\n\n<b>Hawtep</b>
-      naci\xF3 diferente.  \nPosee una habilidad poco com\xFAn: controlar  <color=#FFD369><b>la
+      la mayor\uFFFDa de las personas solo puede dominar <color=#EAEAEA><b>uno</b></color>.\n\n<b>Hawtep</b>
+      naci\uFFFD diferente.  \nPosee una habilidad poco com\uFFFDn: controlar  <color=#FFD369><b>la
       luz</b></color> y <color=#6C63FF><b>la oscuridad</b></color>  \nal mismo tiempo.\n\n---\n\nEsa
-      rareza llam\xF3 la atenci\xF3n de una  \n<color=#FF6B6B><b>agencia secreta</b></color>.\n\nTemiendo
+      rareza llam\uFFFD la atenci\uFFFDn de una  \n<color=#FF6B6B><b>agencia secreta</b></color>.\n\nTemiendo
       que su poder rompiera el <color=#EAEAEA><b>equilibrio</b></color> del mundo,
       lo <b>capturaron</b> y comenzaron a experimentar para entender y <b>controlar</b>
-      su don.\n\n---\n\nUn d\xEDa, un <color=#FF6B6B><b>error</b></color> lo cambi\xF3
-      todo.\n\nDurante un descuido en el laboratorio, Hawtep logr\xF3 <color=#6BCF9B><b>escapar</b></color>. 
-      \nEn medio del caos, una m\xE1quina experimental  de viaje dimensional se activ\xF3
-      y se volvi\xF3  <color=#FF6B6B><b>inestable</b></color>.\n\n---\n\nEl portal
-      lo lanz\xF3 a una <color=#FF6B6B><b>dimensi\xF3n corrompida</b></color>, donde
-      <color=#FFD369><b>la luz</b></color> y <color=#6C63FF><b>la oscuridad</b></color>
+      su don.\n\n---\n\nUn d\uFFFDa, un <color=#FF6B6B><b>error</b></color> lo cambi\uFFFD
+      todo.\n\nDurante un descuido en el laboratorio, Hawtep logr\uFFFD <color=#6BCF9B><b>escapar</b></color>. 
+      \nEn medio del caos, una m\uFFFDquina experimental  de viaje dimensional se
+      activ\uFFFD y se volvi\uFFFD  <color=#FF6B6B><b>inestable</b></color>.\n\n---\n\nEl
+      portal lo lanz\uFFFD a una <color=#FF6B6B><b>dimensi\uFFFDn corrompida</b></color>,
+      donde <color=#FFD369><b>la luz</b></color> y <color=#6C63FF><b>la oscuridad</b></color>
       existen de forma retorcida.\n\nAhora, Hawtep debe  <color=#EAEAEA><b>volar</b></color>,
       <color=#FF6B6B><b>sobrevivir</b></color>  y <color=#6BCF9B><b>encontrar una
-      salida</b></color>,  antes de que ese mundo termine por  <color=#FF6B6B><b>consumirlo</b></color>.\n"
+      salida</b></color>,  antes de que ese mundo termine por  <color=#FF6B6B><b>consumirlo</b></color>."
     m_Metadata:
       m_Items: []
-  - m_Id: 1499620822159360
-    m_Localized: "\xBFQuieres abandonar el equilibrio?"
+  - m_Id: 42
+    m_Localized: "\uFFFDQuieres abandonar el equilibrio?"
     m_Metadata:
       m_Items: []
-  - m_Id: 1499800007020544
+  - m_Id: 43
     m_Localized: Abandonar
     m_Metadata:
       m_Items: []
-  - m_Id: 1499872719474688
+  - m_Id: 44
     m_Localized: Seguir jugando
+    m_Metadata:
+      m_Items: []
+  - m_Id: 45
+    m_Localized: REANUDAR
+    m_Metadata:
+      m_Items: []
+  - m_Id: 46
+    m_Localized: REINICIAR
+    m_Metadata:
+      m_Items: []
+  - m_Id: 47
+    m_Localized: "MEN\uFFFD PRINCIPAL"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 48
+    m_Localized: PAUSADO
+    m_Metadata:
+      m_Items: []
+  - m_Id: 49
+    m_Localized: PERDISTE
+    m_Metadata:
+      m_Items: []
+  - m_Id: 50
+    m_Localized: SEGUNDA OPORTUNIDAD
+    m_Metadata:
+      m_Items: []
+  - m_Id: 51
+    m_Localized: (Ver Anuncio)
+    m_Metadata:
+      m_Items: []
+  - m_Id: 52
+    m_Localized: 'PUNTAJE:'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 53
+    m_Localized: 'MEJOR PUNTAJE:'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 54
+    m_Localized: NUEVO RECORD
     m_Metadata:
       m_Items: []
   references:

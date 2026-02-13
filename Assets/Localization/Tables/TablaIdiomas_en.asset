@@ -181,33 +181,73 @@ MonoBehaviour:
       m_Items: []
   - m_Id: 41
     m_Localized: "In a world where controlling the elements is something ordinary,
-      most people can only master <color=#EAEAEA><b>one</b></color>.\r\n\r\n<b>Hawtep</b>
-      was born different.  \r\nHe possesses a rare ability: controlling <color=#FFD369><b>light</b></color>
-      and <color=#6C63FF><b>darkness</b></color>  \r\nat the same time.\r\n\r\n---\r\n\r\nThat
-      rarity caught the attention of a  \r\n<color=#FF6B6B><b>secret agency</b></color>.\r\n\r\nFearing
+      most people can only master <color=#EAEAEA><b>one</b></color>.\n\n<b>Hawtep</b>
+      was born different.  \nHe possesses a rare ability: controlling <color=#FFD369><b>light</b></color>
+      and <color=#6C63FF><b>darkness</b></color>  \nat the same time.\n\n---\n\nThat
+      rarity caught the attention of a  \n<color=#FF6B6B><b>secret agency</b></color>.\n\nFearing
       his power could break the <color=#EAEAEA><b>balance</b></color> of the world,
       they <b>captured</b> him and began experimenting  to understand and <b>control</b>
-      his gift.\r\n\r\n---\r\n\r\nOne day, a <color=#FF6B6B><b>mistake</b></color>
-      changed everything.\r\n\r\nDuring a moment of negligence in the laboratory,
-      Hawtep managed to <color=#6BCF9B><b>escape</b></color>. Amid the chaos, an
-      experimental dimensional machine activated prematurely and became <color=#FF6B6B><b>unstable</b></color>.\r\n\r\n---\r\n\r\nThe
+      his gift.\n\n---\n\nOne day, a <color=#FF6B6B><b>mistake</b></color> changed
+      everything.\n\nDuring a moment of negligence in the laboratory, Hawtep managed
+      to <color=#6BCF9B><b>escape</b></color>. Amid the chaos, an experimental dimensional
+      machine activated prematurely and became <color=#FF6B6B><b>unstable</b></color>.\n\n---\n\nThe
       portal hurled him into a <color=#FF6B6B><b>corrupted dimension</b></color>,
       where <color=#FFD369><b>light</b></color> and <color=#6C63FF><b>darkness</b></color>
-      exist in twisted forms.\r\n\r\nNow, Hawtep must <color=#EAEAEA><b>fly</b></color>,
+      exist in twisted forms.\n\nNow, Hawtep must <color=#EAEAEA><b>fly</b></color>,
       <color=#FF6B6B><b>survive</b></color>, and <color=#6BCF9B><b>find a way out</b></color>,
-      before that world finally <color=#FF6B6B><b>consumes him</b></color>.\r\n"
+      before that world finally <color=#FF6B6B><b>consumes him</b></color>."
     m_Metadata:
       m_Items: []
-  - m_Id: 1499620822159360
+  - m_Id: 42
     m_Localized: Do you want to abandon balance?
     m_Metadata:
       m_Items: []
-  - m_Id: 1499800007020544
+  - m_Id: 43
     m_Localized: Abandon
     m_Metadata:
       m_Items: []
-  - m_Id: 1499872719474688
+  - m_Id: 44
     m_Localized: Continue playing
+    m_Metadata:
+      m_Items: []
+  - m_Id: 45
+    m_Localized: RESUME
+    m_Metadata:
+      m_Items: []
+  - m_Id: 46
+    m_Localized: RESTART
+    m_Metadata:
+      m_Items: []
+  - m_Id: 47
+    m_Localized: MAIN MENU
+    m_Metadata:
+      m_Items: []
+  - m_Id: 48
+    m_Localized: PAUSED
+    m_Metadata:
+      m_Items: []
+  - m_Id: 49
+    m_Localized: YOU LOST
+    m_Metadata:
+      m_Items: []
+  - m_Id: 50
+    m_Localized: SECOND CHANCE
+    m_Metadata:
+      m_Items: []
+  - m_Id: 51
+    m_Localized: (View Ad)
+    m_Metadata:
+      m_Items: []
+  - m_Id: 52
+    m_Localized: 'SCORE:'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 53
+    m_Localized: 'BEST SCORE:'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 54
+    m_Localized: NEW RECORD
     m_Metadata:
       m_Items: []
   references:

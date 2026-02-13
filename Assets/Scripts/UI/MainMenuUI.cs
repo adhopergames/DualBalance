@@ -26,6 +26,11 @@ public class MainMenuUI : MonoBehaviour
     [Header("Root Input Block (RECOMENDADO)")]
     public CanvasGroup canvasRootGroup;
 
+
+    [Header("Level Loader (en esta escena)")]
+    [SerializeField] private LevelLoader levelLoader;
+
+
     [Header("Transition")]
     [SerializeField] private float transitionDuration = 0.25f;
     [SerializeField] private float slideDistance = 900f;
@@ -177,11 +182,17 @@ public class MainMenuUI : MonoBehaviour
     // -------------------------
     // BOTONES
     // -------------------------
+
     public void OnPlayPressed()
     {
         Time.timeScale = 1f;
-        SceneManager.LoadScene(gameSceneName);
+
+        if (levelLoader != null)
+            levelLoader.LoadScene(gameSceneName);
+        else
+            SceneManager.LoadScene(gameSceneName);
     }
+
 
     public void OnHistoriaPressed() => GoTo(panelHistoria);
     public void OnAchievementsPressed() => GoTo(panelLogros);
