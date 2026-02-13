@@ -20,7 +20,7 @@ MonoBehaviour:
   minSpawnInterval: 0.8
   maxEnergy: 100
   idleDrainPerSecond: 0.05
-  moveDrain: 1
+  moveDrain: 0.5
   attackDrain: 5
   orbAmount: 20
   dualOrbAmount: 15

@@ -32,6 +32,10 @@ public class GameManager : MonoBehaviour
     [Tooltip("Tiempo transcurrido desde que empezó la partida (para dificultad).")]
     public float ElapsedTime { get; private set; }
 
+    [Header("Level Loader (en esta escena)")]
+    [SerializeField] private LevelLoader levelLoader;
+
+
     // Evento para UI cuando hay GameOver FINAL:
     // (scoreFinalInt, bestScoreInt, isNewRecord)
     public event Action<int, int, bool> OnGameOver;
@@ -162,7 +166,7 @@ public class GameManager : MonoBehaviour
 
         // ✅ Score por segundo * multiplicador actual
         Score += scorePerSecond * scoreMultiplier * Time.deltaTime;
-        print(Score);
+        //print(Score);
     }
 
 
@@ -396,18 +400,16 @@ public class GameManager : MonoBehaviour
 
 
     /// Reinicia la escena actual (Retry).
-
     public void Restart()
     {
         Time.timeScale = 1f;
-
-        // ✅ Reiniciamos stats de run antes de recargar
         StatsManager.ResetRunStats();
 
-        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+        if (levelLoader != null)
+            levelLoader.ReloadCurrentScene();
+        else
+            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
-
-
 
     /// Pausa o reanuda el juego.
 
