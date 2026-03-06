@@ -77,7 +77,7 @@ public class PlayerEnergy : MonoBehaviour
             case Orb.OrbType.Light:
                 lightEnergy = Mathf.Min(config.maxEnergy, lightEnergy + config.orbAmount);
 
-                // ✅ Buff score: x2 por 10s
+                // ✅ Buff score: x2 por 7s
                 if (GameManager.Instance != null)
                     GameManager.Instance.ApplyScoreMultiplier(2f, 7f);
                 break;
@@ -85,7 +85,7 @@ public class PlayerEnergy : MonoBehaviour
             case Orb.OrbType.Dark:
                 darkEnergy = Mathf.Min(config.maxEnergy, darkEnergy + config.orbAmount);
 
-                // ✅ Buff score: x2 por 10s
+                // ✅ Buff score: x2 por 7s
                 if (GameManager.Instance != null)
                     GameManager.Instance.ApplyScoreMultiplier(2f, 7f);
                 break;
@@ -94,7 +94,7 @@ public class PlayerEnergy : MonoBehaviour
                 lightEnergy = Mathf.Min(config.maxEnergy, lightEnergy + config.dualOrbAmount);
                 darkEnergy = Mathf.Min(config.maxEnergy, darkEnergy + config.dualOrbAmount);
 
-                // ✅ Buff score: x4 por 5s
+                // ✅ Buff score: x4 por 4s
                 if (GameManager.Instance != null)
                     GameManager.Instance.ApplyScoreMultiplier(4f, 4f);
                 break;

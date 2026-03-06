@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: eec2175c99dfea04b8384065b57b387b
+guid: b523abc6a8ea8224091c6415d52a1ee0
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 369198001125137532
-    second: PanelGameOver_0
+      213: 2766093858011285440
+    second: Fondo Gameplay_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -37,18 +37,18 @@ TextureImporter:
   maxTextureSize: 2048
   textureSettings:
     serializedVersion: 2
-    filterMode: 1
+    filterMode: 0
     aniso: 1
     mipBias: 0
-    wrapU: 1
-    wrapV: 1
-    wrapW: 1
+    wrapU: 0
+    wrapV: 0
+    wrapW: 0
   nPOTScale: 0
   lightmap: 0
   compressionQuality: 50
   spriteMode: 2
   spriteExtrude: 1
-  spriteMeshType: 1
+  spriteMeshType: 0
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
   spritePixelsToUnits: 100
@@ -75,7 +75,7 @@ TextureImporter:
     maxTextureSize: 2048
     resizeAlgorithm: 0
     textureFormat: -1
-    textureCompression: 1
+    textureCompression: 0
     compressionQuality: 50
     crunchedCompression: 0
     allowsAlphaSplitting: 0
@@ -113,13 +113,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: PanelGameOver_0
+      name: Fondo Gameplay_0
       rect:
         serializedVersion: 2
-        x: 124
-        y: 52
-        width: 2260
-        height: 1988
+        x: 0
+        y: 0
+        width: 2000
+        height: 3439
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -128,8 +128,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: c7c19dc30a7af1500800000000000000
-      internalID: 369198001125137532
+      spriteID: 0c7072e55b3236620800000000000000
+      internalID: 2766093858011285440
       vertices: []
       indices: 
       edges: []
@@ -148,7 +148,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      PanelGameOver_0: 369198001125137532
+      Fondo Gameplay_0: 2766093858011285440
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

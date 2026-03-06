@@ -238,11 +238,11 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 52
-    m_Localized: 'PUNTAJE:'
+    m_Localized: PUNTAJE
     m_Metadata:
       m_Items: []
   - m_Id: 53
-    m_Localized: 'MEJOR PUNTAJE:'
+    m_Localized: MEJOR PUNTAJE
     m_Metadata:
       m_Items: []
   - m_Id: 54

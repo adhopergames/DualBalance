@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 /// AchievementManager:
-/// - Define la lista de logros (15 aprox)
+/// - Define la lista de logros
 /// - Guarda desbloqueados en PlayerPrefs
 /// - Chequea condiciones cuando cambian stats / best score
 /// - Dispara evento OnAchievementUnlocked para UI (popup)
@@ -175,14 +175,14 @@ public class AchievementManager : MonoBehaviour
         {
             id = "perfect_balance",
             title = "Equilibrio Perfecto",
-            desc = "Lanza al menos 20 ataques de Luz y 20 de Oscuridad (casi igualados).",
+            desc = "Lanza al menos 15 ataques de Luz y 15 de Oscuridad (casi igualados).",
             condition = () =>
             {
                 // ✅ POR RUN: usamos contadores temporales (no los globales)
                 int l = StatsManager.GetRunAttacksLight();
                 int d = StatsManager.GetRunAttacksDark();
 
-                if (l < 20 || d < 20) return false;
+                if (l < 15 || d < 15) return false;
                 return Mathf.Abs(l - d) <= 1;
             }
         });

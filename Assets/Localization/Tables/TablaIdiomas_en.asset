@@ -239,11 +239,11 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 52
-    m_Localized: 'SCORE:'
+    m_Localized: SCORE
     m_Metadata:
       m_Items: []
   - m_Id: 53
-    m_Localized: 'BEST SCORE:'
+    m_Localized: BEST SCORE
     m_Metadata:
       m_Items: []
   - m_Id: 54
