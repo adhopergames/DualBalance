@@ -79,7 +79,7 @@ public class PlayerEnergy : MonoBehaviour
 
                 // ✅ Buff score: x2 por 7s
                 if (GameManager.Instance != null)
-                    GameManager.Instance.ApplyScoreMultiplier(2f, 7f);
+                    GameManager.Instance.ApplyScoreMultiplier(2f, 8f);
                 break;
 
             case Orb.OrbType.Dark:
@@ -87,7 +87,7 @@ public class PlayerEnergy : MonoBehaviour
 
                 // ✅ Buff score: x2 por 7s
                 if (GameManager.Instance != null)
-                    GameManager.Instance.ApplyScoreMultiplier(2f, 7f);
+                    GameManager.Instance.ApplyScoreMultiplier(2f, 8f);
                 break;
 
             case Orb.OrbType.Dual:
@@ -96,7 +96,7 @@ public class PlayerEnergy : MonoBehaviour
 
                 // ✅ Buff score: x4 por 4s
                 if (GameManager.Instance != null)
-                    GameManager.Instance.ApplyScoreMultiplier(4f, 4f);
+                    GameManager.Instance.ApplyScoreMultiplier(4f, 5f);
                 break;
         }
 

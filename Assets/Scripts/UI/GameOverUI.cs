@@ -33,6 +33,9 @@ public class GameOverUI : MonoBehaviour
     [SerializeField] private float popStartScale = 0.92f;
     [SerializeField] private AnimationCurve easeCurve = AnimationCurve.EaseInOut(0, 0, 1, 1);
 
+    [Header("Level Loader (en esta escena)")]
+    [SerializeField] private LevelLoader levelLoader;
+
     private bool isPendingVisible;
 
     // Anim internals
@@ -239,7 +242,10 @@ public class GameOverUI : MonoBehaviour
     public void OnMenuPressed()
     {
         Time.timeScale = 1f; // por si estaba en 0 en pending
-        SceneManager.LoadScene(menuSceneName);
+        if (levelLoader != null)
+            levelLoader.LoadScene(menuSceneName);
+        else
+            SceneManager.LoadScene(menuSceneName);
     }
 
     public void OnContinuePressed()

@@ -1,51 +1,107 @@
 using System.Collections;
 using System.Collections.Generic;
-using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
+using UnityEngine.Localization.Components;
 
 /// <summary>
 /// AchievementPopupUI:
-/// - Espera a que exista AchievementManager.Instance (por orden de ejecución)
+/// - Espera a que exista AchievementManager.Instance
 /// - Se suscribe a OnAchievementUnlocked
 /// - Muestra un popup por X segundos (unscaled)
 /// - Cola por si caen varios logros seguidos
+/// - Muestra icono + texto fijo + título localizado
+/// - Usa un animador externo para mostrar/ocultar el popup
 /// </summary>
 public class AchievementPopupUI : MonoBehaviour
 {
     [Header("UI")]
+    [Tooltip("Root completo del popup")]
     public GameObject root;
-    public TextMeshProUGUI titleText;
-    public TextMeshProUGUI descText;
+
+    [Tooltip("Imagen del logro desbloqueado")]
+    public Image achievementIcon;
+
+    [Tooltip("Texto localizado fijo, por ejemplo: Logro desbloqueado")]
+    public LocalizeStringEvent unlockedLocalized;
+
+    [Tooltip("Texto localizado del título del logro")]
+    public LocalizeStringEvent titleLocalized;
+
+    [Header("Animation")]
+    [Tooltip("Script encargado de animar el popup")]
+    public AchievementPopupAnimator popupAnimator;
+
+    [Header("Localization")]
+    [Tooltip("Nombre EXACTO de tu String Table Collection")]
+    public string tableName = "TablaIdiomas";
 
     [Header("Timing")]
     public float showSeconds = 2.0f;
 
-    private readonly Queue<(string id, string title, string desc)> queue = new();
-    private bool isShowing;
+    [Header("Icons")]
+    [Tooltip("Lista de iconos por id de logro")]
+    public List<AchievementIcon> icons = new();
 
-    // Guardamos referencia al manager al que nos suscribimos (para desuscribir bien)
+    [System.Serializable]
+    public struct AchievementIcon
+    {
+        public string id;
+        public Sprite icon;
+    }
+
+    private readonly Queue<PopupData> queue = new();
+    private bool isShowing;
     private AchievementManager subscribedManager;
+    private readonly Dictionary<string, Sprite> iconMap = new();
+
+    private struct PopupData
+    {
+        public string id;
+        public Sprite icon;
+
+        public PopupData(string id, Sprite icon)
+        {
+            this.id = id;
+            this.icon = icon;
+        }
+    }
+
+    private void Awake()
+    {
+        // Construimos el mapa id -> icono una sola vez
+        iconMap.Clear();
+
+        foreach (var entry in icons)
+        {
+            if (!string.IsNullOrEmpty(entry.id) && entry.icon != null && !iconMap.ContainsKey(entry.id))
+                iconMap.Add(entry.id, entry.icon);
+        }
+    }
 
     private void Start()
     {
-        if (root != null) root.SetActive(false);
+        // Dejamos el popup oculto al inicio
+        if (root != null)
+            root.SetActive(false);
+
+        // Si existe animador, lo reseteamos a estado oculto
+        if (popupAnimator != null)
+            popupAnimator.ResetToHiddenState();
+
         isShowing = false;
 
-        // ✅ Importante: esperar al AchievementManager (por orden de carga)
+        // Esperar al manager por si el orden de ejecución varía
         StartCoroutine(SubscribeWhenReady());
     }
 
     private IEnumerator SubscribeWhenReady()
     {
-        // Espera hasta que exista el manager
         while (AchievementManager.Instance == null)
             yield return null;
 
         subscribedManager = AchievementManager.Instance;
         subscribedManager.OnAchievementUnlocked += HandleUnlocked;
-
-        // Debug opcional
-        // Debug.Log("AchievementPopupUI: suscrito a AchievementManager ✅");
     }
 
     private void OnDestroy()
@@ -56,7 +112,11 @@ public class AchievementPopupUI : MonoBehaviour
 
     private void HandleUnlocked(string id, string title, string desc)
     {
-        queue.Enqueue((id, title, desc));
+        Sprite icon = null;
+        iconMap.TryGetValue(id, out icon);
+
+        // Guardamos el id para resolver la localización y el icono para mostrarlo
+        queue.Enqueue(new PopupData(id, icon));
 
         if (!isShowing)
             StartCoroutine(ShowQueueRoutine());
@@ -68,12 +128,50 @@ public class AchievementPopupUI : MonoBehaviour
 
         while (queue.Count > 0)
         {
-            var item = queue.Dequeue();
+            PopupData item = queue.Dequeue();
 
-            if (root != null) root.SetActive(true);
-            if (titleText != null) titleText.text = item.title;
-            if (descText != null) descText.text = item.desc;
+            // -------------------------
+            // Mostrar popup con animación si existe
+            // -------------------------
+            if (popupAnimator != null)
+            {
+                popupAnimator.PlayShow();
+            }
+            else if (root != null)
+            {
+                root.SetActive(true);
+            }
 
+            // -------------------------
+            // Texto fijo: "Logro desbloqueado"
+            // -------------------------
+            if (unlockedLocalized != null)
+            {
+                unlockedLocalized.StringReference.TableReference = tableName;
+                unlockedLocalized.StringReference.TableEntryReference = "ACH_UNLOCKED_POPUP";
+                unlockedLocalized.RefreshString();
+            }
+
+            // -------------------------
+            // Título del logro por id
+            // -------------------------
+            if (titleLocalized != null)
+            {
+                titleLocalized.StringReference.TableReference = tableName;
+                titleLocalized.StringReference.TableEntryReference = $"ACH_{item.id}_T";
+                titleLocalized.RefreshString();
+            }
+
+            // -------------------------
+            // Icono
+            // -------------------------
+            if (achievementIcon != null)
+            {
+                achievementIcon.sprite = item.icon;
+                achievementIcon.enabled = item.icon != null;
+            }
+
+            // Tiempo visible del popup
             float t = showSeconds;
             while (t > 0f)
             {
@@ -81,7 +179,21 @@ public class AchievementPopupUI : MonoBehaviour
                 yield return null;
             }
 
-            if (root != null) root.SetActive(false);
+            // -------------------------
+            // Ocultar popup con animación si existe
+            // -------------------------
+            if (popupAnimator != null)
+            {
+                popupAnimator.PlayHide();
+
+                // Esperamos el tiempo de salida para no cortar la animación
+                yield return new WaitForSecondsRealtime(popupAnimator.hideDuration);
+            }
+            else if (root != null)
+            {
+                root.SetActive(false);
+            }
+
             yield return null;
         }
 
