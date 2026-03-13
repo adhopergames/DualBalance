@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 0c654cbb6c66d4a409d2fc0ceb2c8313
+guid: 36e7a4744e9f0ab44bf351eb1a43202d
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 7215958449825038820
-    second: OrbeLuz_0
+      213: 489293220621689915
+    second: FillAreaOscuridad_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -46,13 +46,13 @@ TextureImporter:
   nPOTScale: 0
   lightmap: 0
   compressionQuality: 50
-  spriteMode: 2
+  spriteMode: 1
   spriteExtrude: 1
-  spriteMeshType: 1
+  spriteMeshType: 0
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
   spritePixelsToUnits: 100
-  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteBorder: {x: 75, y: 20, z: 75, w: 20}
   spriteGenerateFallbackPhysicsShape: 1
   alphaUsage: 1
   alphaIsTransparency: 1
@@ -113,23 +113,23 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: OrbeLuz_0
+      name: FillAreaOscuridad_0
       rect:
         serializedVersion: 2
-        x: 544
-        y: 242
-        width: 2536
-        height: 2515
+        x: 4
+        y: 17
+        width: 1242
+        height: 133
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 4e1ccc37afb342460800000000000000
-      internalID: 7215958449825038820
+      spriteID: b34a92e77915ac600800000000000000
+      internalID: 489293220621689915
       vertices: []
       indices: 
       edges: []
@@ -138,8 +138,8 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 
-    internalID: 0
+    spriteID: 5e97eb03825dee720800000000000000
+    internalID: 1537655665
     vertices: []
     indices: 
     edges: []
@@ -148,7 +148,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      OrbeLuz_0: 7215958449825038820
+      FillAreaOscuridad_0: 489293220621689915
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

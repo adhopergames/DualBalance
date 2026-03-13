@@ -95,7 +95,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 20
-    m_Localized: Perform at least 20 Light and 20 Dark attacks with near-perfect
+    m_Localized: Perform at least 15 Light and 15 Dark attacks with near-perfect
       balance.
     m_Metadata:
       m_Items: []
@@ -248,6 +248,26 @@ MonoBehaviour:
       m_Items: []
   - m_Id: 54
     m_Localized: NEW RECORD
+    m_Metadata:
+      m_Items: []
+  - m_Id: 55
+    m_Localized: Darkness
+    m_Metadata:
+      m_Items: []
+  - m_Id: 56
+    m_Localized: Light
+    m_Metadata:
+      m_Items: []
+  - m_Id: 57
+    m_Localized: LIGHT ATK
+    m_Metadata:
+      m_Items: []
+  - m_Id: 58
+    m_Localized: DARK ATK
+    m_Metadata:
+      m_Items: []
+  - m_Id: 59
+    m_Localized: Achievement Unlocked
     m_Metadata:
       m_Items: []
   references:

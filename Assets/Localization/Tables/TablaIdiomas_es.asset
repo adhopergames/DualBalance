@@ -95,7 +95,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 20
-    m_Localized: Lanza al menos 20 ataques de Luz y 20 de Oscuridad (casi igualados).
+    m_Localized: Lanza al menos 15 ataques de Luz y 15 de Oscuridad (casi igualados).
     m_Metadata:
       m_Items: []
   - m_Id: 21
@@ -247,6 +247,26 @@ MonoBehaviour:
       m_Items: []
   - m_Id: 54
     m_Localized: NUEVO RECORD
+    m_Metadata:
+      m_Items: []
+  - m_Id: 55
+    m_Localized: Oscuridad
+    m_Metadata:
+      m_Items: []
+  - m_Id: 56
+    m_Localized: Luz
+    m_Metadata:
+      m_Items: []
+  - m_Id: 57
+    m_Localized: ATQ. LUZ.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 58
+    m_Localized: ATQ. OSC.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 59
+    m_Localized: Logro Desbloqueado
     m_Metadata:
       m_Items: []
   references:

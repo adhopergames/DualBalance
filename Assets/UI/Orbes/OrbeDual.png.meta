@@ -116,10 +116,10 @@ TextureImporter:
       name: OrbeDual_0
       rect:
         serializedVersion: 2
-        x: 495
-        y: 0
-        width: 2635
-        height: 2417
+        x: 433
+        y: 110
+        width: 2768
+        height: 2769
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}

@@ -61,4 +61,8 @@ public class GameConfig : ScriptableObject
     [Tooltip("Peso del orbe dual. Debe ser menor que los normales para que sea raro.")]
     public float dualOrbWeight = 0.25f;
 
+    [Header("Orb Combo Spawn")]
+    [Tooltip("Probabilidad de que un spawn de orbe venga acompañado por 1 obstáculo neutral.")]
+    [Range(0f, 1f)] public float orbWithNeutralChance = 0.35f;
+
 }

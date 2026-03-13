@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 0c654cbb6c66d4a409d2fc0ceb2c8313
+guid: 84377dde16a5ec948a1bbe7fe80a2b6a
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 7215958449825038820
-    second: OrbeLuz_0
+      213: -8875177696390569744
+    second: ParedElementalOscuridad_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -113,13 +113,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: OrbeLuz_0
+      name: ParedElementalOscuridad_0
       rect:
         serializedVersion: 2
-        x: 544
-        y: 242
-        width: 2536
-        height: 2515
+        x: 64
+        y: 1082
+        width: 4699
+        height: 777
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -128,8 +128,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 4e1ccc37afb342460800000000000000
-      internalID: 7215958449825038820
+      spriteID: 0f0ab2868e805d480800000000000000
+      internalID: -8875177696390569744
       vertices: []
       indices: 
       edges: []
@@ -148,7 +148,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      OrbeLuz_0: 7215958449825038820
+      ParedElementalOscuridad_0: -8875177696390569744
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

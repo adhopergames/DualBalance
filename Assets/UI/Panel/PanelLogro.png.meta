@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 0c654cbb6c66d4a409d2fc0ceb2c8313
+guid: 9ab90163c9acd874fb9a76c36009e5b1
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 7215958449825038820
-    second: OrbeLuz_0
+      213: 1955124586527931321
+    second: PanelLogro_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -46,7 +46,7 @@ TextureImporter:
   nPOTScale: 0
   lightmap: 0
   compressionQuality: 50
-  spriteMode: 2
+  spriteMode: 1
   spriteExtrude: 1
   spriteMeshType: 1
   alignment: 0
@@ -113,13 +113,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: OrbeLuz_0
+      name: PanelLogro_0
       rect:
         serializedVersion: 2
-        x: 544
-        y: 242
-        width: 2536
-        height: 2515
+        x: 49
+        y: 54
+        width: 2013
+        height: 995
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -128,8 +128,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 4e1ccc37afb342460800000000000000
-      internalID: 7215958449825038820
+      spriteID: 9bb31a7e37ff12b10800000000000000
+      internalID: 1955124586527931321
       vertices: []
       indices: 
       edges: []
@@ -138,7 +138,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 
+    spriteID: 5e97eb03825dee720800000000000000
     internalID: 0
     vertices: []
     indices: 
@@ -148,7 +148,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      OrbeLuz_0: 7215958449825038820
+      PanelLogro_0: 1955124586527931321
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
