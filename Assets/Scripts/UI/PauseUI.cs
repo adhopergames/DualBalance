@@ -20,14 +20,12 @@ public class PauseUI : MonoBehaviour
     [SerializeField] private float popStartScale = 0.92f;
     [SerializeField] private AnimationCurve easeCurve = AnimationCurve.EaseInOut(0, 0, 1, 1);
 
-    // Internals
     private CanvasGroup pauseGroup;
     private RectTransform pauseRT;
 
     private Coroutine animCo;
     private bool lastPaused;
 
-    // Back robusto (igual patrón que tu MainMenuUI)
     private bool backQueued;
     private bool backHooked;
     private bool pendingBack;
@@ -46,7 +44,7 @@ public class PauseUI : MonoBehaviour
     private void OnEnable()
     {
         HookBack(true);
-        InputSystem.onEvent += OnInputEvent; // low-level (robusto)
+        InputSystem.onEvent += OnInputEvent;
     }
 
     private void OnDisable()
@@ -65,7 +63,6 @@ public class PauseUI : MonoBehaviour
             pendingBack = false;
         }
 
-        // Activa ActionMap completo si existe
         if (backAction.action.actionMap != null)
         {
             if (enable) backAction.action.actionMap.Enable();
@@ -91,7 +88,6 @@ public class PauseUI : MonoBehaviour
 
     private void Start()
     {
-        // Estado inicial seguro
         if (pausePanel != null) pausePanel.SetActive(false);
         if (pauseButton != null) pauseButton.SetActive(true);
 
@@ -112,23 +108,25 @@ public class PauseUI : MonoBehaviour
     {
         if (GameManager.Instance == null) return;
 
-        // Procesar back (queued)
+        // Durante tutorial: ocultar botón de pausa y no procesar back para pausa
+        bool isTutorial = GameManager.Instance.State == GameState.Tutorial;
+        if (pauseButton != null)
+            pauseButton.SetActive(!isTutorial && GameManager.Instance.State != GameState.Paused);
+
+        if (isTutorial)
+            return;
+
+        // Procesar back
         if (backQueued)
         {
             backQueued = false;
 
-            // Si estás animando, lo dejamos pendiente para evitar glitches
             if (animCo != null)
-            {
                 pendingBack = true;
-            }
             else
-            {
                 HandleBackButton();
-            }
         }
 
-        // Listener del estado (tu botón ya llama TogglePause, aquí solo reaccionamos)
         bool isPaused = (GameManager.Instance.State == GameState.Paused);
 
         if (isPaused != lastPaused)
@@ -145,7 +143,6 @@ public class PauseUI : MonoBehaviour
         backQueued = true;
     }
 
-    // Low-level: detecta Escape/Back aunque Keyboard.current esté null al inicio
     private void OnInputEvent(InputEventPtr eventPtr, InputDevice device)
     {
         if (!eventPtr.IsA<StateEvent>() && !eventPtr.IsA<DeltaStateEvent>())
@@ -162,16 +159,11 @@ public class PauseUI : MonoBehaviour
     {
         if (GameManager.Instance == null) return;
 
-        // Solo si está pausado: cerrar pausa
         if (GameManager.Instance.State == GameState.Paused)
         {
-            // OJO: NO duplicamos lógica. Solo llamamos al mismo Toggle.
             GameManager.Instance.TogglePause();
             return;
         }
-
-        // Si no está pausado, no hacemos nada aquí
-        // (el gameplay puede manejar back para otra cosa si quieres)
     }
 
     private IEnumerator AnimatePause(bool open)
@@ -182,7 +174,6 @@ public class PauseUI : MonoBehaviour
             yield break;
         }
 
-        // Duración y valores inicial/final
         float duration = open ? animInDuration : animOutDuration;
 
         float a0 = open ? 0f : 1f;
@@ -204,7 +195,6 @@ public class PauseUI : MonoBehaviour
         }
         else
         {
-            // Al cerrar: desactivamos interacción ya, para que no se cliquee durante fade-out
             pauseGroup.interactable = false;
             pauseGroup.blocksRaycasts = false;
         }
@@ -213,7 +203,7 @@ public class PauseUI : MonoBehaviour
 
         while (t < duration)
         {
-            t += Time.unscaledDeltaTime; // ✅ animación funciona con Time.timeScale = 0
+            t += Time.unscaledDeltaTime;
             float n = Mathf.Clamp01(t / duration);
             float eased = easeCurve != null ? easeCurve.Evaluate(n) : n;
 
@@ -232,20 +222,19 @@ public class PauseUI : MonoBehaviour
 
         if (open)
         {
-            // Ya visible: ahora sí permitimos interacción
             pauseGroup.interactable = true;
             pauseGroup.blocksRaycasts = true;
         }
         else
         {
-            // Ocultar definitivo
             pausePanel.SetActive(false);
-            if (pauseButton != null) pauseButton.SetActive(true);
+
+            if (pauseButton != null && GameManager.Instance != null && GameManager.Instance.State != GameState.Tutorial)
+                pauseButton.SetActive(true);
         }
 
         animCo = null;
 
-        // Si alguien dio back durante la animación, lo ejecutamos ahora (una sola vez)
         if (pendingBack)
         {
             pendingBack = false;

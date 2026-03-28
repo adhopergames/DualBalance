@@ -110,9 +110,11 @@ public class ElementalAttackSystem : MonoBehaviour
                 destroyedAny = true;
                 destroyedCount++;
 
-                // Solo destruimos. NO removemos de la lista aquí.
-                // El OnDisable() del ElementalWall llamará UnregisterWall() y la quitará.
-                Destroy(wall.gameObject);
+                var destroyVfx = wall.GetComponent<WallDestroyVFX>();
+                if (destroyVfx != null)
+                    destroyVfx.PlayAndDestroy();
+                else
+                    Destroy(wall.gameObject);
             }
         }
 

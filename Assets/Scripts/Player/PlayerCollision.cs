@@ -70,7 +70,12 @@ public class PlayerCollision : MonoBehaviour
             AudioManager.Instance?.PlayOrbPickup(orb.orbType);
 
             // ✅ Destruir el orbe
-            Destroy(orb.gameObject);
+            var orbVfx = other.GetComponent<OrbPickupVFX>();
+            if (orbVfx != null)
+                orbVfx.PlayAndDestroy();
+            else
+                Destroy(orb.gameObject);
+            print("destruyete");
         }
     }
 }

@@ -6,6 +6,7 @@ public class PlayerCombat : MonoBehaviour
     [Header("References")]
     [Tooltip("Arrastra aquí el componente que implemente IPlayerInput (PCInputReader, MobileInputReader, etc.).")]
     [SerializeField] private MonoBehaviour inputSource; // Debe implementar IPlayerInput
+    [SerializeField] private PlayerAttackFeedback attackFeedback;
 
     private IPlayerInput input;
     private PlayerEnergy energy;
@@ -67,6 +68,13 @@ public class PlayerCombat : MonoBehaviour
         // 6) Si realmente destruyó algo, aquí disparas FX/sonido
         if (destroyedAny)
         {
+            if (type == ElementType.Light)
+                attackFeedback?.PlayLight();
+            else
+                attackFeedback?.PlayDark();
+
+            HapticManager.LightTap();
+
             // AttackVFX.Play(type);
             // AudioManager.Instance.PlaySFX("Attack");
         }
