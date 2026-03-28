@@ -75,11 +75,11 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 15
-    m_Localized: "Especialista Lum\uFFFDnico"
+    m_Localized: "Especialista Lum\xEDnico"
     m_Metadata:
       m_Items: []
   - m_Id: 16
-    m_Localized: Lanza 30 ataques de Luz.
+    m_Localized: Lanza 60 ataques de Luz.
     m_Metadata:
       m_Items: []
   - m_Id: 17
@@ -87,7 +87,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 18
-    m_Localized: Lanza 30 ataques de Oscuridad.
+    m_Localized: Lanza 60 ataques de Oscuridad.
     m_Metadata:
       m_Items: []
   - m_Id: 19
@@ -111,7 +111,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 24
-    m_Localized: Muere 5 veces.
+    m_Localized: Muere 6 veces.
     m_Metadata:
       m_Items: []
   - m_Id: 25
@@ -119,15 +119,15 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 26
-    m_Localized: Muere 5 veces por paredes elementales.
+    m_Localized: Muere 15 veces por paredes elementales.
     m_Metadata:
       m_Items: []
   - m_Id: 27
-    m_Localized: "Obst\uFFFDculos del Destino"
+    m_Localized: "Obst\xE1culos del Destino"
     m_Metadata:
       m_Items: []
   - m_Id: 28
-    m_Localized: "Muere 5 veces por obst\uFFFDculos neutrales."
+    m_Localized: "Muere 10 veces por obst\xE1culos neutrales."
     m_Metadata:
       m_Items: []
   - m_Id: 29
@@ -139,7 +139,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 31
-    m_Localized: "Velocidad M\uFFFDxima"
+    m_Localized: "Velocidad M\xE1xima"
     m_Metadata:
       m_Items: []
   - m_Id: 32
@@ -147,11 +147,11 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 33
-    m_Localized: "M\uFFFDs All\uFFFD del Equilibrio"
+    m_Localized: "M\xE1s All\xE1 del Equilibrio"
     m_Metadata:
       m_Items: []
   - m_Id: 34
-    m_Localized: Alcanza 5000 de puntaje.
+    m_Localized: Alcanza 6000 de puntaje.
     m_Metadata:
       m_Items: []
   - m_Id: 35
@@ -159,7 +159,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 36
-    m_Localized: Destruye 50 paredes elementales en total.
+    m_Localized: Destruye 100 paredes elementales en total.
     m_Metadata:
       m_Items: []
   - m_Id: 37
@@ -167,7 +167,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 38
-    m_Localized: Desbloquea 10 logros.
+    m_Localized: Desbloquea 14 logros.
     m_Metadata:
       m_Items: []
   - m_Id: 39
@@ -180,25 +180,25 @@ MonoBehaviour:
       m_Items: []
   - m_Id: 41
     m_Localized: "En un mundo donde el control de los elementos es algo cotidiano, 
-      la mayor\uFFFDa de las personas solo puede dominar <color=#EAEAEA><b>uno</b></color>.\n\n<b>Hawtep</b>
-      naci\uFFFD diferente.  \nPosee una habilidad poco com\uFFFDn: controlar  <color=#FFD369><b>la
+      la mayor\xEDa de las personas solo puede dominar <color=#EAEAEA><b>uno</b></color>.\n\n<b>Hawtep</b>
+      naci\xF3 diferente.  \nPosee una habilidad poco com\xFAn: controlar  <color=#FFD369><b>la
       luz</b></color> y <color=#6C63FF><b>la oscuridad</b></color>  \nal mismo tiempo.\n\n---\n\nEsa
-      rareza llam\uFFFD la atenci\uFFFDn de una  \n<color=#FF6B6B><b>agencia secreta</b></color>.\n\nTemiendo
+      rareza llam\xF3 la atenci\xF3n de una  \n<color=#FF6B6B><b>agencia secreta</b></color>.\n\nTemiendo
       que su poder rompiera el <color=#EAEAEA><b>equilibrio</b></color> del mundo,
       lo <b>capturaron</b> y comenzaron a experimentar para entender y <b>controlar</b>
-      su don.\n\n---\n\nUn d\uFFFDa, un <color=#FF6B6B><b>error</b></color> lo cambi\uFFFD
-      todo.\n\nDurante un descuido en el laboratorio, Hawtep logr\uFFFD <color=#6BCF9B><b>escapar</b></color>. 
-      \nEn medio del caos, una m\uFFFDquina experimental  de viaje dimensional se
-      activ\uFFFD y se volvi\uFFFD  <color=#FF6B6B><b>inestable</b></color>.\n\n---\n\nEl
-      portal lo lanz\uFFFD a una <color=#FF6B6B><b>dimensi\uFFFDn corrompida</b></color>,
-      donde <color=#FFD369><b>la luz</b></color> y <color=#6C63FF><b>la oscuridad</b></color>
+      su don.\n\n---\n\nUn d\xEDa, un <color=#FF6B6B><b>error</b></color> lo cambi\xF3
+      todo.\n\nDurante un descuido en el laboratorio, Hawtep logr\xF3 <color=#6BCF9B><b>escapar</b></color>. 
+      \nEn medio del caos, una m\xE1quina experimental  de viaje dimensional se activ\xF3
+      y se volvi\xF3  <color=#FF6B6B><b>inestable</b></color>.\n\n---\n\nEl portal
+      lo lanz\xF3 a una <color=#FF6B6B><b>dimensi\xF3n corrompida</b></color>, donde
+      <color=#FFD369><b>la luz</b></color> y <color=#6C63FF><b>la oscuridad</b></color>
       existen de forma retorcida.\n\nAhora, Hawtep debe  <color=#EAEAEA><b>volar</b></color>,
       <color=#FF6B6B><b>sobrevivir</b></color>  y <color=#6BCF9B><b>encontrar una
       salida</b></color>,  antes de que ese mundo termine por  <color=#FF6B6B><b>consumirlo</b></color>."
     m_Metadata:
       m_Items: []
   - m_Id: 42
-    m_Localized: "\uFFFDQuieres abandonar el equilibrio?"
+    m_Localized: "\xBFQuieres abandonar el equilibrio?"
     m_Metadata:
       m_Items: []
   - m_Id: 43
@@ -218,7 +218,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 47
-    m_Localized: "MEN\uFFFD PRINCIPAL"
+    m_Localized: "MEN\xDA PRINCIPAL"
     m_Metadata:
       m_Items: []
   - m_Id: 48
@@ -267,6 +267,45 @@ MonoBehaviour:
       m_Items: []
   - m_Id: 59
     m_Localized: Logro Desbloqueado
+    m_Metadata:
+      m_Items: []
+  - m_Id: 60
+    m_Localized: "Mu\xE9vete"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 61
+    m_Localized: "Desliza a la izquierda o derecha para cambiar de carril y evitar
+      obst\xE1culos."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 62
+    m_Localized: Ataca con el elemento opuesto
+    m_Metadata:
+      m_Items: []
+  - m_Id: 63
+    m_Localized: Toca la izquierda para usar Oscuridad y la derecha para usar Luz.
+      Cada pared se destruye con su elemento opuesto.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 64
+    m_Localized: "Energ\xEDa Elemental"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 65
+    m_Localized: "Atacar y moverte consume energ\xEDa. Incluso al estar quieto se
+      agota lentamente. Recoge orbes para recuperarla y potenciarte. "
+    m_Metadata:
+      m_Items: []
+  - m_Id: 66
+    m_Localized: Empezar
+    m_Metadata:
+      m_Items: []
+  - m_Id: 67
+    m_Localized: Siguiente
+    m_Metadata:
+      m_Items: []
+  - m_Id: 68
+    m_Localized: Omitir
     m_Metadata:
       m_Items: []
   references:

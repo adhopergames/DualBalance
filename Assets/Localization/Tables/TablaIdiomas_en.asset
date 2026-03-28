@@ -79,7 +79,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 16
-    m_Localized: Perform 30 Light attacks.
+    m_Localized: Perform 60 Light attacks.
     m_Metadata:
       m_Items: []
   - m_Id: 17
@@ -87,7 +87,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 18
-    m_Localized: Perform 30 Dark attacks.
+    m_Localized: Perform 60 Dark attacks.
     m_Metadata:
       m_Items: []
   - m_Id: 19
@@ -112,7 +112,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 24
-    m_Localized: Die 5 times.
+    m_Localized: Die 6 times.
     m_Metadata:
       m_Items: []
   - m_Id: 25
@@ -120,7 +120,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 26
-    m_Localized: Die 5 times due to elemental walls.
+    m_Localized: Die 15 times due to elemental walls.
     m_Metadata:
       m_Items: []
   - m_Id: 27
@@ -128,7 +128,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 28
-    m_Localized: Die 5 times due to neutral obstacles.
+    m_Localized: Die 10 times due to neutral obstacles.
     m_Metadata:
       m_Items: []
   - m_Id: 29
@@ -152,7 +152,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 34
-    m_Localized: Reach a best score of 5000.
+    m_Localized: Reach a best score of 6000.
     m_Metadata:
       m_Items: []
   - m_Id: 35
@@ -160,7 +160,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 36
-    m_Localized: Destroy 50 elemental walls in total.
+    m_Localized: Destroy 100 elemental walls in total.
     m_Metadata:
       m_Items: []
   - m_Id: 37
@@ -168,7 +168,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 38
-    m_Localized: Unlock 10 achievements.
+    m_Localized: Unlock 14 achievements.
     m_Metadata:
       m_Items: []
   - m_Id: 39
@@ -268,6 +268,44 @@ MonoBehaviour:
       m_Items: []
   - m_Id: 59
     m_Localized: Achievement Unlocked
+    m_Metadata:
+      m_Items: []
+  - m_Id: 60
+    m_Localized: Move
+    m_Metadata:
+      m_Items: []
+  - m_Id: 61
+    m_Localized: Swipe left or right to change lanes and avoid obstacles.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 62
+    m_Localized: Attack with the opposite element
+    m_Metadata:
+      m_Items: []
+  - m_Id: 63
+    m_Localized: Tap the left side to use Darkness and the right side to use Light.
+      Each wall is destroyed by its opposite element.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 64
+    m_Localized: Elemental Energy
+    m_Metadata:
+      m_Items: []
+  - m_Id: 65
+    m_Localized: Attacking and moving consumes energy. It slowly drains even when
+      standing still. Collect orbs to recover it and power up.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 66
+    m_Localized: Start
+    m_Metadata:
+      m_Items: []
+  - m_Id: 67
+    m_Localized: Next
+    m_Metadata:
+      m_Items: []
+  - m_Id: 68
+    m_Localized: Skip
     m_Metadata:
       m_Items: []
   references:

@@ -5,6 +5,7 @@ using UnityEngine.SceneManagement;
 public enum GameState
 {
     Playing,
+    Tutorial,
     Paused,
     GameOver,        // Final definitivo
     GameOverPending  // Perdió, pero puede revivir con anuncio
@@ -34,7 +35,6 @@ public class GameManager : MonoBehaviour
 
     [Header("Level Loader (en esta escena)")]
     [SerializeField] private LevelLoader levelLoader;
-
 
     // Evento para UI cuando hay GameOver FINAL:
     // (scoreFinalInt, bestScoreInt, isNewRecord)
@@ -70,7 +70,6 @@ public class GameManager : MonoBehaviour
 
     /// True mientras el jugador está protegido tras revivir.
     /// Úsalo en el script de colisiones para NO morir durante este tiempo.
-
     public bool IsReviveInvulnerable { get; private set; }
 
     // Controla si ya se usó el continue en esta run
@@ -80,10 +79,6 @@ public class GameManager : MonoBehaviour
     private RunSnapshot snapshot;
     private bool hasSnapshot;
 
-    // -------------------------
-    // SCORE MULTIPLIER (Orbs)
-    // -------------------------
-
     [Header("Score Multiplier (Orbs)")]
     [Tooltip("Multiplicador actual aplicado al score por segundo. 1 = normal.")]
     [SerializeField] private float scoreMultiplier = 1f;
@@ -91,11 +86,9 @@ public class GameManager : MonoBehaviour
     [Tooltip("Tiempo restante (segundos) del multiplicador actual.")]
     [SerializeField] private float scoreMultiplierRemaining = 0f;
 
-    // (Opcional) Evento para UI si quieres mostrar "x2 12s"
+    // Evento opcional para UI si quieres mostrar información del buff
     public event Action<float, float> OnScoreMultiplierChanged; // (mult, remaining)
 
-
-    // Estructura interna con lo mínimo necesario para “seguir donde iba”
     [Serializable]
     private struct RunSnapshot
     {
@@ -133,7 +126,6 @@ public class GameManager : MonoBehaviour
         // ✅ Importante: esto NO borra PlayerPrefs, solo contadores temporales de la partida.
         StatsManager.ResetRunStats();
 
-
         // -------------------------
         // Reset de run (Retry / volver a jugar)
         // -------------------------
@@ -152,27 +144,21 @@ public class GameManager : MonoBehaviour
         // ✅ Si hay multiplicador activo, reducimos el tiempo restante
         if (scoreMultiplierRemaining > 0f)
         {
-            scoreMultiplierRemaining -= Time.deltaTime; // depende del juego (si pausas, se pausa también)
+            scoreMultiplierRemaining -= Time.deltaTime;
+
             if (scoreMultiplierRemaining <= 0f)
             {
-                // ✅ Se acabó el buff: volver a normal
                 scoreMultiplierRemaining = 0f;
                 scoreMultiplier = 1f;
-
-                // (Opcional) avisar UI
                 OnScoreMultiplierChanged?.Invoke(scoreMultiplier, scoreMultiplierRemaining);
             }
         }
 
         // ✅ Score por segundo * multiplicador actual
         Score += scorePerSecond * scoreMultiplier * Time.deltaTime;
-        //print(Score);
     }
 
-
-
     /// Velocidad actual del mundo (aumenta con el tiempo y se limita por maxWorldSpeed).
-    /// Todos los objetos que caen deberían usar esto (en vez de una speed fija).
     public float CurrentWorldSpeed
     {
         get
@@ -183,8 +169,6 @@ public class GameManager : MonoBehaviour
     }
 
     /// Intervalo de spawn que se reduce con el tiempo y se limita por minSpawnInterval.
-    /// El SpawnManager lo usa para spawnear más rápido con la dificultad.
-
     public float CurrentSpawnInterval
     {
         get
@@ -194,65 +178,58 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    /// Entra al estado Tutorial.
+    /// Se congela el gameplay, pero la UI del tutorial sigue funcionando.
+    public void EnterTutorial()
+    {
+        // No entrar en tutorial desde estados finales
+        if (State == GameState.GameOver || State == GameState.GameOverPending) return;
+
+        State = GameState.Tutorial;
+        Time.timeScale = 0f;
+    }
+
+    /// Finaliza el tutorial y comienza el gameplay normal.
+    public void FinishTutorial()
+    {
+        State = GameState.Playing;
+        Time.timeScale = 1f;
+    }
 
     /// Llamar esto cuando el jugador pierde.
-    /// Decide si va a GameOverPending (puede revivir) o a GameOver final.
-
     public void TriggerGameOver()
     {
         // ✅ Si no estamos jugando, ignoramos triggers extra.
         if (State != GameState.Playing) return;
 
         if (continuesUsed < maxContinuesPerRun)
-        {
             EnterGameOverPending();
-        }
         else
-        {
             GameOverFinal();
-        }
     }
 
-    /// Entra en estado GameOverPending:
-    /// - Pausa juego
-    /// - Guarda snapshot
-    /// - Guarda best score (aunque sea pending)
-    /// - Notifica UI para mostrar botón Continue
-
+    /// Entra en estado GameOverPending.
     private void EnterGameOverPending()
     {
         State = GameState.GameOverPending;
-
-        // Pausamos para que no sigan cayendo cosas mientras decide
         Time.timeScale = 0f;
 
-        // Guardamos snapshot (en memoria)
         SaveSnapshot();
 
-        // ✅ Calculamos NEW RECORD usando el best ANTES de guardar.
         int scoreNowInt = Mathf.RoundToInt(Score);
         int prevBest = SaveManager.GetBestScore();
         bool isNewRecordNow = scoreNowInt > prevBest;
 
-        // ✅ Guardamos best score INCLUSO EN PENDING
         SaveManager.TrySetBestScore(scoreNowInt);
-
         int bestNow = SaveManager.GetBestScore();
 
-        // Notificamos UI: puede mostrar botón Continue
         OnGameOverPending?.Invoke(scoreNowInt, bestNow, true, isNewRecordNow);
     }
 
-
-    /// GameOver FINAL:
-    /// - Guarda best score si aplica
-    /// - Notifica UI final (aquí sí aparece NEW RECORD)
-
+    /// GameOver FINAL.
     private void GameOverFinal()
     {
         State = GameState.GameOver;
-
-        // Aseguramos tiempo normal
         Time.timeScale = 1f;
 
         int finalScoreInt = Mathf.RoundToInt(Score);
@@ -264,64 +241,45 @@ public class GameManager : MonoBehaviour
     }
 
     /// Se llama cuando el anuncio rewarded se completa.
-    /// Restaura snapshot, limpia peligros y vuelve a Playing.
-    /// (Este método lo llama AdManager cuando el anuncio termina COMPLETADO)
-
     public void ContinueAfterAd()
     {
-        // Solo se puede revivir desde pending
         if (State != GameState.GameOverPending) return;
 
-        // Si no hay snapshot, no podemos revivir => final
         if (!hasSnapshot)
         {
             GameOverFinal();
             return;
         }
 
-        // Consumimos un continue
         continuesUsed++;
-
-        // Volvemos a tiempo normal
         Time.timeScale = 1f;
 
-        // Restauramos run
         Score = snapshot.score;
         ElapsedTime = snapshot.elapsedTime;
 
-        // ✅ Al revivir, dejamos el score multiplier en normal (evita exploits/bugs)
+        // ✅ Al revivir, dejamos el score multiplier en normal
         scoreMultiplier = 1f;
         scoreMultiplierRemaining = 0f;
         OnScoreMultiplierChanged?.Invoke(scoreMultiplier, scoreMultiplierRemaining);
 
-        // Restauramos energías
         playerEnergy.lightEnergy = snapshot.lightEnergy;
         playerEnergy.darkEnergy = snapshot.darkEnergy;
 
-        // Restauramos carril actual
         playerMovement.currentLane = snapshot.currentLane;
 
-        // Restauramos posición X
         Vector3 p = playerTransform.position;
         playerTransform.position = new Vector3(snapshot.playerX, p.y, p.z);
 
-        // Limpieza de peligros cerca del jugador para evitar muerte instantánea
         ClearNearbyHazards();
 
-        // Periodo de gracia: invencibilidad temporal
         IsReviveInvulnerable = true;
         StartCoroutine(ReviveInvulnerabilityRoutine());
 
-        // Volvemos a jugar
         State = GameState.Playing;
-
-        // Avisamos UI para ocultar panel
         OnRevive?.Invoke();
     }
 
-
     /// Guarda snapshot mínimo para poder revivir.
-
     private void SaveSnapshot()
     {
         if (playerEnergy == null || playerMovement == null || playerTransform == null)
@@ -344,27 +302,15 @@ public class GameManager : MonoBehaviour
         hasSnapshot = true;
     }
 
-    // Invencibilidad temporal tras revivir.
-    // ✅ Robustez móvil: WaitForSecondsRealtime NO se rompe por un "delta gigante" al volver de Ads.
+    /// Invencibilidad temporal tras revivir.
     private System.Collections.IEnumerator ReviveInvulnerabilityRoutine()
     {
-        // Nos aseguramos que el flag esté activo
         IsReviveInvulnerable = true;
-
-        // ✅ Espera tiempo REAL (ignora Time.timeScale y no explota por pausas largas)
         yield return new WaitForSecondsRealtime(reviveInvulnerabilitySeconds);
-
-        // Se acaba la invulnerabilidad
         IsReviveInvulnerable = false;
     }
 
-
-
     /// Limpia obstáculos/paredes cerca del jugador (zona segura).
-    /// - Borra ElementalWall cerca
-    /// - Borra FallingObject cerca, EXCEPTO los orbes (Orb)
-    /// - Amplía rango según velocidad actual (si va rápido, limpia más)
-
     private void ClearNearbyHazards()
     {
         if (playerTransform == null) return;
@@ -398,7 +344,6 @@ public class GameManager : MonoBehaviour
         }
     }
 
-
     /// Reinicia la escena actual (Retry).
     public void Restart()
     {
@@ -411,13 +356,12 @@ public class GameManager : MonoBehaviour
             SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
 
-    /// Pausa o reanuda el juego.
-
     /// Toggle para UI (Button.onClick) - SIN parámetros
     public void TogglePause()
     {
-        // No permitimos pausar en GameOver o en el menú de continue
-        if (State == GameState.GameOver || State == GameState.GameOverPending) return;
+        // No permitimos pausar en estados finales ni durante tutorial
+        if (State == GameState.GameOver || State == GameState.GameOverPending || State == GameState.Tutorial)
+            return;
 
         bool shouldPause = State != GameState.Paused;
         Pause(shouldPause);
@@ -426,10 +370,14 @@ public class GameManager : MonoBehaviour
     /// Pausa o reanuda el juego (modo correcto)
     public void Pause(bool paused)
     {
+        // No permitimos que una lógica externa "despause" durante tutorial
+        if (State == GameState.Tutorial && !paused)
+            return;
+
         if (paused)
         {
             State = GameState.Paused;
-            Time.timeScale = 0f; // ✅ congela todo lo que depende del deltaTime
+            Time.timeScale = 0f;
         }
         else
         {
@@ -439,31 +387,20 @@ public class GameManager : MonoBehaviour
     }
 
     /// Activa un multiplicador temporal de score.
-    /// Regla: si el nuevo multiplicador es mayor, reemplaza.
-    /// Si es igual, refresca la duración.
-    /// Si es menor, se ignora.
     public void ApplyScoreMultiplier(float multiplier, float durationSeconds)
     {
-        // Seguridad
         if (multiplier <= 1f || durationSeconds <= 0f) return;
 
-        // ✅ Si el nuevo buff es más fuerte, reemplazamos
         if (multiplier > scoreMultiplier)
         {
-            scoreMultiplier = multiplier;                 // nuevo multiplicador
-            scoreMultiplierRemaining = durationSeconds;   // nueva duración
+            scoreMultiplier = multiplier;
+            scoreMultiplierRemaining = durationSeconds;
         }
-        // ✅ Si es el mismo multiplicador, refrescamos duración
         else if (Mathf.Approximately(multiplier, scoreMultiplier))
         {
             scoreMultiplierRemaining = durationSeconds;
         }
-        // ✅ Si es más débil, lo ignoramos
-        // else { no hace nada }
 
-        // (Opcional) avisar UI
         OnScoreMultiplierChanged?.Invoke(scoreMultiplier, scoreMultiplierRemaining);
     }
-
-
 }

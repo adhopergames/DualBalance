@@ -160,7 +160,7 @@ public class AchievementManager : MonoBehaviour
             id = "light_specialist",
             title = "Especialista Lumínico",
             desc = "Lanza 30 ataques de Luz.",
-            condition = () => StatsManager.GetAttacksLight() >= 30
+            condition = () => StatsManager.GetAttacksLight() >= 60
         });
 
         achievements.Add(new Achievement
@@ -168,7 +168,7 @@ public class AchievementManager : MonoBehaviour
             id = "dark_mastery",
             title = "Dominio Oscuro",
             desc = "Lanza 30 ataques de Oscuridad.",
-            condition = () => StatsManager.GetAttacksDark() >= 30
+            condition = () => StatsManager.GetAttacksDark() >= 60
         });
 
         achievements.Add(new Achievement
@@ -204,7 +204,7 @@ public class AchievementManager : MonoBehaviour
             id = "learning_to_fly",
             title = "Aprendiendo a Volar",
             desc = "Muere 5 veces.",
-            condition = () => StatsManager.GetDeathsTotal() >= 5
+            condition = () => StatsManager.GetDeathsTotal() >= 6
         });
 
         achievements.Add(new Achievement
@@ -212,7 +212,7 @@ public class AchievementManager : MonoBehaviour
             id = "walls_do_not_forgive",
             title = "Las Paredes No Perdonan",
             desc = "Muere 5 veces por paredes elementales.",
-            condition = () => StatsManager.GetDeathsWall() >= 5
+            condition = () => StatsManager.GetDeathsWall() >= 15
         });
 
         achievements.Add(new Achievement
@@ -220,7 +220,7 @@ public class AchievementManager : MonoBehaviour
             id = "fate_obstacles",
             title = "Obstáculos del Destino",
             desc = "Muere 5 veces por obstáculos neutrales.",
-            condition = () => StatsManager.GetDeathsObstacle() >= 5
+            condition = () => StatsManager.GetDeathsObstacle() >= 10
         });
 
         // -------------------------
@@ -247,7 +247,7 @@ public class AchievementManager : MonoBehaviour
             id = "beyond_balance",
             title = "Más Allá del Equilibrio",
             desc = "Alcanza 5000 de score (Best).",
-            condition = () => Best() >= 5000
+            condition = () => Best() >= 6000
         });
 
         // -------------------------
@@ -258,15 +258,15 @@ public class AchievementManager : MonoBehaviour
             id = "unstoppable",
             title = "Imparable",
             desc = "Destruye 50 paredes en total.",
-            condition = () => StatsManager.GetWallsTotal() >= 50
+            condition = () => StatsManager.GetWallsTotal() >= 100
         });
 
         achievements.Add(new Achievement
         {
             id = "master_of_dualbalance",
             title = "Maestro del DualBalance",
-            desc = "Desbloquea 10 logros.",
-            condition = () => GetUnlockedCount() >= 10
+            desc = "Desbloquea 13 logros.",
+            condition = () => GetUnlockedCount() >= 14
         });
     }
     public static List<AchievementInfo> GetAll()

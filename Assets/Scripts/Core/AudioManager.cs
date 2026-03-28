@@ -10,7 +10,10 @@ public enum SfxId
     AttackLight,
     AttackDark,
     WallBreak,
-    Lose
+    Lose,
+
+    UIButton,
+    UIBack
 }
 
 public class AudioManager : MonoBehaviour
@@ -184,4 +187,7 @@ public class AudioManager : MonoBehaviour
         sfxVolume = Mathf.Clamp01(v);
         if (sfxSource != null) sfxSource.volume = sfxVolume;
     }
+
+    public void PlayUIButton() => PlaySFX(SfxId.UIButton, 0.5f);
+    public void PlayUIBack() => PlaySFX(SfxId.UIBack, 0.5f);
 }

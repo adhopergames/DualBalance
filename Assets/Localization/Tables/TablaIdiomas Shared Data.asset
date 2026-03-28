@@ -251,6 +251,42 @@ MonoBehaviour:
     m_Key: ACH_UNLOCKED_POPUP
     m_Metadata:
       m_Items: []
+  - m_Id: 60
+    m_Key: TUTORIAL_1_TITLE
+    m_Metadata:
+      m_Items: []
+  - m_Id: 61
+    m_Key: TUTORIAL_1_DESC
+    m_Metadata:
+      m_Items: []
+  - m_Id: 62
+    m_Key: TUTORIAL_2_TITLE
+    m_Metadata:
+      m_Items: []
+  - m_Id: 63
+    m_Key: TUTORIAL_2_DESC
+    m_Metadata:
+      m_Items: []
+  - m_Id: 64
+    m_Key: TUTORIAL_3_TITLE
+    m_Metadata:
+      m_Items: []
+  - m_Id: 65
+    m_Key: TUTORIAL_3_DESC
+    m_Metadata:
+      m_Items: []
+  - m_Id: 66
+    m_Key: UI_START
+    m_Metadata:
+      m_Items: []
+  - m_Id: 67
+    m_Key: UI_NEXT
+    m_Metadata:
+      m_Items: []
+  - m_Id: 68
+    m_Key: UI_SKIP
+    m_Metadata:
+      m_Items: []
   m_Metadata:
     m_Items: []
   m_KeyGenerator:
