@@ -166,16 +166,19 @@ public class MainMenuUI : MonoBehaviour
     {
         if (isExitConfirmOpen)
         {
+            AudioManager.Instance?.PlayUIBack();
             CloseExitConfirm();
             return;
         }
 
         if (mainMenuRT != null && currentPanelRT != mainMenuRT)
         {
+            AudioManager.Instance?.PlayUIBack();
             GoTo(panelMainMenu);
             return;
         }
 
+        AudioManager.Instance?.PlayUIBack();
         OpenExitConfirm();
     }
 

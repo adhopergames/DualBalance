@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
 public enum SfxId
@@ -21,7 +21,7 @@ public class AudioManager : MonoBehaviour
     public static AudioManager Instance { get; private set; }
 
     [Header("Audio Sources")]
-    [Tooltip("Fuente para m�sica (loop).")]
+    [Tooltip("Fuente para música (loop).")]
     public AudioSource musicSource;
 
     [Tooltip("Fuente para efectos (one-shot).")]
@@ -55,15 +55,13 @@ public class AudioManager : MonoBehaviour
             Destroy(gameObject);
             return;
         }
+
         Instance = this;
         DontDestroyOnLoad(gameObject);
-
-        //Validaciones
 
         if (musicSource == null || sfxSource == null)
             Debug.LogError("AudioManager: Asigna musicSource y sfxSource en el Inspector.");
 
-        //Configurar Fuentes
         if (musicSource != null)
         {
             musicSource.loop = true;
@@ -88,15 +86,11 @@ public class AudioManager : MonoBehaviour
         foreach (var entry in sfxEntries)
         {
             if (entry.clip == null) continue;
-
-            //Si hay duplicados, el ultimo gana
-
             sfxMap[entry.id] = entry.clip;
         }
     }
 
     // ---------- MUSIC ----------
-
 
     public void PlayMenuMusic()
     {
@@ -120,8 +114,6 @@ public class AudioManager : MonoBehaviour
         if (musicSource == null) return;
         if (clip == null) return;
 
-        //Si ya esta sonando esa misma musica, no reiniciar
-
         if (musicSource.clip == clip && musicSource.isPlaying) return;
 
         musicSource.clip = clip;
@@ -131,51 +123,66 @@ public class AudioManager : MonoBehaviour
 
     // ---------- SFX ----------
 
-    /// Reproduce un sonido SFX una vez, sin cortar otros sonidos (OneShot).
-
-    public void PlaySFX(SfxId id, float volumeMulltiplier = 1f)
+    public void PlaySFX(SfxId id, float volumeMultiplier = 1f, float pitchMin = 1f, float pitchMax = 1f)
     {
         if (sfxSource == null) return;
 
         if (sfxMap == null) BuildSfxMap();
 
-        if(sfxMap.TryGetValue(id, out AudioClip clip) && clip != null)
+        if (sfxMap.TryGetValue(id, out AudioClip clip) && clip != null)
         {
-            float vol = Mathf.Clamp01(sfxVolume * volumeMulltiplier);
-            sfxSource.PlayOneShot(clip, vol);
-        }
+            float vol = Mathf.Clamp01(sfxVolume * volumeMultiplier);
+            float randomPitch = Random.Range(pitchMin, pitchMax);
 
-        // Si no hay clip asignado, no hace nada (no rompe).
+            sfxSource.pitch = randomPitch;
+            sfxSource.PlayOneShot(clip, vol);
+            sfxSource.pitch = 1f;
+        }
     }
 
-    public void PlayMove() => PlaySFX(SfxId.Move,0.8f);
+    public void PlayMove()
+    {
+        float randomVolume = Random.Range(0.80f, 0.90f);
+        PlaySFX(SfxId.Move, randomVolume, 0.95f, 1.05f);
+    }
 
     public void PlayOrbPickup(Orb.OrbType type)
     {
         switch (type)
         {
-            case Orb.OrbType.Light: PlaySFX(SfxId.OrbPickupLight); break;
-            case Orb.OrbType.Dark: PlaySFX(SfxId.OrbPickupDark); break;
-            case Orb.OrbType.Dual: PlaySFX(SfxId.OrbPickupDual); break;
+            case Orb.OrbType.Light:
+                PlaySFX(SfxId.OrbPickupLight, 0.90f, 0.97f, 1.03f);
+                break;
+
+            case Orb.OrbType.Dark:
+                PlaySFX(SfxId.OrbPickupDark, 0.90f, 0.97f, 1.03f);
+                break;
+
+            case Orb.OrbType.Dual:
+                PlaySFX(SfxId.OrbPickupDual, 0.95f, 0.98f, 1.02f);
+                break;
         }
     }
 
     public void PlayAttack(ElementType type)
     {
-        if (type == ElementType.Light) PlaySFX(SfxId.AttackLight);
-        else PlaySFX(SfxId.AttackDark);
+        if (type == ElementType.Light)
+            PlaySFX(SfxId.AttackLight, 1.05f, 0.98f, 1.03f);
+        else
+            PlaySFX(SfxId.AttackDark, 1.05f, 0.98f, 1.03f);
     }
 
     public void PlayWallBreak(int count)
     {
-        // Si rompe varias paredes, puedes subir el volumen un poco
-        float mult = Mathf.Clamp01(1f + (count - 1) * 0.05f);
-        PlaySFX(SfxId.WallBreak, mult);
+        // Más suave para no tapar el ataque
+        float mult = 0.45f + Mathf.Min((count - 1) * 0.04f, 0.12f);
+        PlaySFX(SfxId.WallBreak, mult, 0.96f, 1.04f);
     }
 
     public void PlayLose() => PlaySFX(SfxId.Lose, 1f);
+    public void PlayUIButton() => PlaySFX(SfxId.UIButton, 1f);
+    public void PlayUIBack() => PlaySFX(SfxId.UIBack, 1f);
 
-    // Ajustes de volumen en runtime (opcional)
     public void SetMusicVolume(float v)
     {
         musicVolume = Mathf.Clamp01(v);
@@ -188,6 +195,10 @@ public class AudioManager : MonoBehaviour
         if (sfxSource != null) sfxSource.volume = sfxVolume;
     }
 
-    public void PlayUIButton() => PlaySFX(SfxId.UIButton, 0.5f);
-    public void PlayUIBack() => PlaySFX(SfxId.UIBack, 0.5f);
+    public void StopAllSFX()
+    {
+        if (sfxSource == null) return;
+
+        sfxSource.Stop();
+    }
 }

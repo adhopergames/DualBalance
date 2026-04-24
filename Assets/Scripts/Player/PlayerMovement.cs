@@ -97,6 +97,7 @@ public class PlayerMovement : MonoBehaviour
         // Reinicia animación de paso para que se vea cada input
         if (movingRight) animator.SetTrigger(StepRightHash);
         else animator.SetTrigger(StepLeftHash);
+        AudioManager.Instance?.PlayMove();
 
         // ✅ IMPORTANTE: reinicia el movimiento con easing desde la posición ACTUAL
         // Esto hace que si el jugador presiona rápido, el cambio se sienta fluido (sin saltos).

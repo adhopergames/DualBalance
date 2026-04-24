@@ -32,6 +32,9 @@ public class PlayerCollision : MonoBehaviour
             // ✅ Stats
             StatsManager.AddDeathObstacle();
 
+            // ✅ Audio lose
+            AudioManager.Instance?.PlayLose();
+
             // ✅ GameOver (pending/final lo decide el GameManager)
             GameManager.Instance.TriggerGameOver();
             return;
@@ -48,6 +51,9 @@ public class PlayerCollision : MonoBehaviour
 
             // ✅ Stats por tipo de pared
             StatsManager.AddDeathWall(wall.elementType);
+
+            // ✅ Audio lose
+            AudioManager.Instance?.PlayLose();
 
             GameManager.Instance.TriggerGameOver();
             return;
@@ -75,7 +81,6 @@ public class PlayerCollision : MonoBehaviour
                 orbVfx.PlayAndDestroy();
             else
                 Destroy(orb.gameObject);
-            print("destruyete");
         }
     }
 }

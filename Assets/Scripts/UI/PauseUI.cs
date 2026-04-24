@@ -161,6 +161,7 @@ public class PauseUI : MonoBehaviour
 
         if (GameManager.Instance.State == GameState.Paused)
         {
+            AudioManager.Instance?.PlayUIBack();
             GameManager.Instance.TogglePause();
             return;
         }

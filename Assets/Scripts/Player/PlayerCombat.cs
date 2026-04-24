@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using CandyCoded.HapticFeedback;
 
 [RequireComponent(typeof(PlayerEnergy))]
 public class PlayerCombat : MonoBehaviour
@@ -73,10 +74,12 @@ public class PlayerCombat : MonoBehaviour
             else
                 attackFeedback?.PlayDark();
 
-            HapticManager.LightTap();
+            AudioManager.Instance?.PlayAttack(type);
 
-            // AttackVFX.Play(type);
-            // AudioManager.Instance.PlaySFX("Attack");
+#if UNITY_ANDROID || UNITY_IOS
+            HapticFeedback.LightFeedback();
+#endif
+
         }
     }
 }
