@@ -236,12 +236,16 @@ public class GameOverUI : MonoBehaviour
 
     public void OnRetryPressed()
     {
+        AudioManager.Instance?.StopAllSFX();
         GameManager.Instance.Restart();
     }
 
     public void OnMenuPressed()
     {
-        Time.timeScale = 1f; // por si estaba en 0 en pending
+        AudioManager.Instance?.StopAllSFX();
+
+        Time.timeScale = 1f;
+
         if (levelLoader != null)
             levelLoader.LoadScene(menuSceneName);
         else
@@ -250,6 +254,8 @@ public class GameOverUI : MonoBehaviour
 
     public void OnContinuePressed()
     {
+        AudioManager.Instance?.StopAllSFX();
+
         if (AdManager.Instance == null) return;
         AdManager.Instance.ShowRewarded();
     }

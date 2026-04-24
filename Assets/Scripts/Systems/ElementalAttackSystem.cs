@@ -122,6 +122,12 @@ public class ElementalAttackSystem : MonoBehaviour
         if (destroyedCount > 0)
             StatsManager.AddWallsDestroyed(targetType, destroyedCount);
 
+        // 🎵 Sonido de paredes destruidas
+        if (destroyedCount > 0)
+        {
+            AudioManager.Instance?.PlayWallBreak(destroyedCount);
+        }
+
         return destroyedAny;
     }
 
