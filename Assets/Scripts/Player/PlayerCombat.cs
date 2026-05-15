@@ -1,5 +1,8 @@
 ﻿using UnityEngine;
+
+#if UNITY_ANDROID || UNITY_IOS
 using CandyCoded.HapticFeedback;
+#endif
 
 [RequireComponent(typeof(PlayerEnergy))]
 public class PlayerCombat : MonoBehaviour
@@ -77,7 +80,7 @@ public class PlayerCombat : MonoBehaviour
             AudioManager.Instance?.PlayAttack(type);
 
 #if UNITY_ANDROID || UNITY_IOS
-            HapticFeedback.LightFeedback();
+            HapticFeedback.MediumFeedback();
 #endif
 
         }

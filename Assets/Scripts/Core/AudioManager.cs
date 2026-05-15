@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 public enum SfxId
@@ -11,7 +12,6 @@ public enum SfxId
     AttackDark,
     WallBreak,
     Lose,
-
     UIButton,
     UIBack
 }
@@ -20,26 +20,32 @@ public class AudioManager : MonoBehaviour
 {
     public static AudioManager Instance { get; private set; }
 
-    [Header("Audio Sources")]
-    [Tooltip("Fuente para música (loop).")]
-    public AudioSource musicSource;
+    private const string MusicVolumeKey = "MusicVolume";
+    private const string SfxVolumeKey = "SfxVolume";
 
-    [Tooltip("Fuente para efectos (one-shot).")]
+    [Header("Audio Sources")]
+    public AudioSource musicSource;
     public AudioSource sfxSource;
 
     [Header("Music Clips")]
     public AudioClip menuMusic;
     public AudioClip gameMusic;
 
+    [Header("Auto Play")]
+    [SerializeField] private bool playMenuMusicOnStart = true;
+
+    [Header("Fade")]
+    [SerializeField] private float musicFadeDuration = 0.8f;
+
     [Header("SFX Clips")]
-    [Tooltip("Lista de SFX asignables desde el Inspector.")]
     public List<SfxEntry> sfxEntries = new List<SfxEntry>();
 
     [Header("Volumes")]
     [Range(0f, 1f)] public float musicVolume = 0.7f;
-    [Range(0f, 1f)] public float sfxVolume = 0.9f;
+    [Range(0f, 1f)] public float sfxVolume = 1f;
 
     private Dictionary<SfxId, AudioClip> sfxMap;
+    private Coroutine fadeCoroutine;
 
     [System.Serializable]
     public class SfxEntry
@@ -59,13 +65,37 @@ public class AudioManager : MonoBehaviour
         Instance = this;
         DontDestroyOnLoad(gameObject);
 
-        if (musicSource == null || sfxSource == null)
-            Debug.LogError("AudioManager: Asigna musicSource y sfxSource en el Inspector.");
+        LoadVolumes();
+        ConfigureSources();
+        BuildSfxMap();
+    }
+
+    private void Start()
+    {
+        if (playMenuMusicOnStart)
+            PlayMenuMusic();
+    }
+
+    private void LoadVolumes()
+    {
+        musicVolume = PlayerPrefs.GetFloat(MusicVolumeKey, musicVolume);
+        sfxVolume = PlayerPrefs.GetFloat(SfxVolumeKey, sfxVolume);
+    }
+
+    private void ConfigureSources()
+    {
+        if (musicSource == null)
+            Debug.LogError("AudioManager: falta asignar Music Source.");
+
+        if (sfxSource == null)
+            Debug.LogError("AudioManager: falta asignar Sfx Source.");
 
         if (musicSource != null)
         {
             musicSource.loop = true;
             musicSource.playOnAwake = false;
+            musicSource.mute = false;
+            musicSource.spatialBlend = 0f;
             musicSource.volume = musicVolume;
         }
 
@@ -73,10 +103,10 @@ public class AudioManager : MonoBehaviour
         {
             sfxSource.loop = false;
             sfxSource.playOnAwake = false;
+            sfxSource.mute = false;
+            sfxSource.spatialBlend = 0f;
             sfxSource.volume = sfxVolume;
         }
-
-        BuildSfxMap();
     }
 
     private void BuildSfxMap()
@@ -90,8 +120,6 @@ public class AudioManager : MonoBehaviour
         }
     }
 
-    // ---------- MUSIC ----------
-
     public void PlayMenuMusic()
     {
         PlayMusic(menuMusic);
@@ -102,32 +130,91 @@ public class AudioManager : MonoBehaviour
         PlayMusic(gameMusic);
     }
 
-    public void StopMusic()
-    {
-        if (musicSource == null) return;
-        musicSource.Stop();
-        musicSource.clip = null;
-    }
-
     private void PlayMusic(AudioClip clip)
     {
-        if (musicSource == null) return;
-        if (clip == null) return;
+        if (musicSource == null || clip == null) return;
 
-        if (musicSource.clip == clip && musicSource.isPlaying) return;
+        if (fadeCoroutine != null)
+        {
+            StopCoroutine(fadeCoroutine);
+            fadeCoroutine = null;
+        }
+
+        if (musicSource.clip == clip && musicSource.isPlaying)
+            return;
 
         musicSource.clip = clip;
         musicSource.volume = musicVolume;
+        musicSource.loop = true;
         musicSource.Play();
     }
 
-    // ---------- SFX ----------
+    public void FadeOutCurrentMusic()
+    {
+        if (musicSource == null) return;
+
+        if (fadeCoroutine != null)
+            StopCoroutine(fadeCoroutine);
+
+        fadeCoroutine = StartCoroutine(FadeOutRoutine());
+    }
+
+    private IEnumerator FadeOutRoutine()
+    {
+        float startVolume = musicSource.volume;
+        float t = 0f;
+
+        while (t < musicFadeDuration)
+        {
+            t += Time.unscaledDeltaTime;
+            musicSource.volume = Mathf.Lerp(startVolume, 0f, t / musicFadeDuration);
+            yield return null;
+        }
+
+        musicSource.Stop();
+        musicSource.clip = null;
+        musicSource.volume = musicVolume;
+        fadeCoroutine = null;
+    }
+
+    public void SetMusicVolume(float v)
+    {
+        musicVolume = Mathf.Clamp01(v);
+
+        if (musicSource != null)
+            musicSource.volume = musicVolume;
+
+        PlayerPrefs.SetFloat(MusicVolumeKey, musicVolume);
+        PlayerPrefs.Save();
+    }
+
+    public void SetSfxVolume(float v)
+    {
+        sfxVolume = Mathf.Clamp01(v);
+
+        if (sfxSource != null)
+            sfxSource.volume = sfxVolume;
+
+        PlayerPrefs.SetFloat(SfxVolumeKey, sfxVolume);
+        PlayerPrefs.Save();
+    }
+
+    public float GetMusicVolume()
+    {
+        return musicVolume;
+    }
+
+    public float GetSfxVolume()
+    {
+        return sfxVolume;
+    }
 
     public void PlaySFX(SfxId id, float volumeMultiplier = 1f, float pitchMin = 1f, float pitchMax = 1f)
     {
         if (sfxSource == null) return;
 
-        if (sfxMap == null) BuildSfxMap();
+        if (sfxMap == null)
+            BuildSfxMap();
 
         if (sfxMap.TryGetValue(id, out AudioClip clip) && clip != null)
         {
@@ -142,8 +229,7 @@ public class AudioManager : MonoBehaviour
 
     public void PlayMove()
     {
-        float randomVolume = Random.Range(0.80f, 0.90f);
-        PlaySFX(SfxId.Move, randomVolume, 0.95f, 1.05f);
+        PlaySFX(SfxId.Move, Random.Range(0.80f, 0.90f), 0.95f, 1.05f);
     }
 
     public void PlayOrbPickup(Orb.OrbType type)
@@ -174,31 +260,28 @@ public class AudioManager : MonoBehaviour
 
     public void PlayWallBreak(int count)
     {
-        // Más suave para no tapar el ataque
         float mult = 0.45f + Mathf.Min((count - 1) * 0.04f, 0.12f);
         PlaySFX(SfxId.WallBreak, mult, 0.96f, 1.04f);
     }
 
-    public void PlayLose() => PlaySFX(SfxId.Lose, 1f);
-    public void PlayUIButton() => PlaySFX(SfxId.UIButton, 1f);
-    public void PlayUIBack() => PlaySFX(SfxId.UIBack, 1f);
-
-    public void SetMusicVolume(float v)
+    public void PlayLose()
     {
-        musicVolume = Mathf.Clamp01(v);
-        if (musicSource != null) musicSource.volume = musicVolume;
+        PlaySFX(SfxId.Lose, 1f);
     }
 
-    public void SetSfxVolume(float v)
+    public void PlayUIButton()
     {
-        sfxVolume = Mathf.Clamp01(v);
-        if (sfxSource != null) sfxSource.volume = sfxVolume;
+        PlaySFX(SfxId.UIButton, 1f);
+    }
+
+    public void PlayUIBack()
+    {
+        PlaySFX(SfxId.UIBack, 1f);
     }
 
     public void StopAllSFX()
     {
         if (sfxSource == null) return;
-
         sfxSource.Stop();
     }
 }

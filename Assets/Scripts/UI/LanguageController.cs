@@ -4,36 +4,51 @@ using UnityEngine.Localization.Settings;
 
 public class LanguageController : MonoBehaviour
 {
-    [Header("UI")]
-    [SerializeField] private TMP_Dropdown languageDropdown;
+    [Header("Dropdowns")]
+    [SerializeField] private TMP_Dropdown mobileLanguageDropdown;
+    [SerializeField] private TMP_Dropdown pcLanguageDropdown;
+
+    private bool isChanging;
 
     private void Awake()
     {
-        // Leer idioma guardado
         int savedLocale = PlayerPrefs.GetInt("LocaleKey", 0);
 
-        // Esperar a que el sistema de localization esté listo
         LocalizationSettings.InitializationOperation.WaitForCompletion();
 
         var locales = LocalizationSettings.AvailableLocales.Locales;
         savedLocale = Mathf.Clamp(savedLocale, 0, locales.Count - 1);
 
-        // Aplicar idioma inmediatamente
         LocalizationSettings.SelectedLocale = locales[savedLocale];
 
-        // Configurar dropdown sin disparar evento
-        if (languageDropdown != null)
-            languageDropdown.SetValueWithoutNotify(savedLocale);
+        SetDropdownValueWithoutEvent(mobileLanguageDropdown, savedLocale);
+        SetDropdownValueWithoutEvent(pcLanguageDropdown, savedLocale);
     }
 
     private void Start()
     {
-        if (languageDropdown != null)
-            languageDropdown.onValueChanged.AddListener(ChangeLocale);
+        if (mobileLanguageDropdown != null)
+            mobileLanguageDropdown.onValueChanged.AddListener(ChangeLocale);
+
+        if (pcLanguageDropdown != null)
+            pcLanguageDropdown.onValueChanged.AddListener(ChangeLocale);
+    }
+
+    private void OnDestroy()
+    {
+        if (mobileLanguageDropdown != null)
+            mobileLanguageDropdown.onValueChanged.RemoveListener(ChangeLocale);
+
+        if (pcLanguageDropdown != null)
+            pcLanguageDropdown.onValueChanged.RemoveListener(ChangeLocale);
     }
 
     public void ChangeLocale(int localeId)
     {
+        if (isChanging) return;
+
+        isChanging = true;
+
         var locales = LocalizationSettings.AvailableLocales.Locales;
         localeId = Mathf.Clamp(localeId, 0, locales.Count - 1);
 
@@ -41,5 +56,18 @@ public class LanguageController : MonoBehaviour
 
         PlayerPrefs.SetInt("LocaleKey", localeId);
         PlayerPrefs.Save();
+
+        SetDropdownValueWithoutEvent(mobileLanguageDropdown, localeId);
+        SetDropdownValueWithoutEvent(pcLanguageDropdown, localeId);
+
+        isChanging = false;
+    }
+
+    private void SetDropdownValueWithoutEvent(TMP_Dropdown dropdown, int value)
+    {
+        if (dropdown == null) return;
+
+        dropdown.SetValueWithoutNotify(value);
+        dropdown.RefreshShownValue();
     }
 }

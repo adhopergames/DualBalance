@@ -4,47 +4,84 @@ using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.LowLevel;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class MainMenuUI : MonoBehaviour
 {
+    [System.Serializable]
+    public class MenuCanvasSet
+    {
+        [Header("Canvas Root")]
+        public GameObject canvasRoot;
+
+        [Header("Panels")]
+        public GameObject panelMainMenu;
+        public GameObject panelHistoria;
+        public GameObject panelLogros;
+        public GameObject panelAjustes;
+
+        [Header("Exit Confirm")]
+        public GameObject panelExitConfirm;
+        public RectTransform exitDialogBox;
+
+        [Header("Logo")]
+        public GameObject logo;
+
+        [Header("Root Input Block")]
+        public CanvasGroup canvasRootGroup;
+
+        [Header("Settings Sliders")]
+        public Slider musicSlider;
+        public Slider sfxSlider;
+    }
+
     [Header("Scenes")]
     public string gameSceneName = "Game";
 
+    [Header("Canvas Sets")]
+    [SerializeField] private MenuCanvasSet mobileCanvas;
+    [SerializeField] private MenuCanvasSet pcCanvas;
+
+    [Header("Canvas Selection")]
+    [SerializeField] private bool useAutoCanvas = true;
+    [SerializeField] private bool forcePCCanvas = false;
+
     [Header("UI Actions (NEW Input System)")]
-    public InputActionReference backAction; // UI/Cancel
+    public InputActionReference backAction;
 
-    [Header("Panels (RectTransform + CanvasGroup)")]
-    public GameObject panelMainMenu;
-    public GameObject panelHistoria;
-    public GameObject panelLogros;
-    public GameObject panelAjustes;
-
-    [Header("Exit Confirm (Overlay)")]
-    public GameObject panelExitConfirm;
-    public RectTransform exitDialogBox;
-
-    [Header("Root Input Block (RECOMENDADO)")]
-    public CanvasGroup canvasRootGroup;
-
-
-    [Header("Level Loader (en esta escena)")]
+    [Header("Level Loader")]
     [SerializeField] private LevelLoader levelLoader;
-
 
     [Header("Transition")]
     [SerializeField] private float transitionDuration = 0.25f;
     [SerializeField] private float slideDistance = 900f;
     [SerializeField] private AnimationCurve easeCurve = AnimationCurve.EaseInOut(0, 0, 1, 1);
 
-    [Header("Soft Fade (sutil)")]
+    [Header("Soft Fade")]
     [SerializeField] private bool useSoftFade = true;
     [Range(0.5f, 1f)]
     [SerializeField] private float softFadeMinAlpha = 0.92f;
+
+    [Header("Logo Fade")]
+    [SerializeField] private float logoFadeDuration = 0.18f;
 
     [Header("Exit Confirm Animation")]
     [SerializeField] private float exitAnimDuration = 0.18f;
     [Range(0.5f, 1f)]
     [SerializeField] private float exitPopStartScale = 0.94f;
+
+    private MenuCanvasSet activeCanvas;
+
+    private GameObject panelMainMenu;
+    private GameObject panelHistoria;
+    private GameObject panelLogros;
+    private GameObject panelAjustes;
+    private GameObject panelExitConfirm;
+    private GameObject logo;
+
+    private RectTransform exitDialogBox;
+    private CanvasGroup canvasRootGroup;
+    private CanvasGroup logoCanvasGroup;
 
     private RectTransform currentPanelRT;
     private RectTransform mainMenuRT;
@@ -52,11 +89,13 @@ public class MainMenuUI : MonoBehaviour
 
     private Coroutine transitionCo;
     private Coroutine exitAnimCo;
+    private Coroutine logoFadeCo;
 
     private bool isTransitioning;
     private bool isExitConfirmOpen;
+    private bool isPCCanvasActive;
+    private bool isLoadingGame;
 
-    // Back robusto
     private bool backQueued;
     private bool backHooked;
     private bool pendingBack;
@@ -64,8 +103,6 @@ public class MainMenuUI : MonoBehaviour
     private void OnEnable()
     {
         HookBack(true);
-
-        // ✅ Captura low-level: evita que el primer Back “se pierda”
         InputSystem.onEvent += OnInputEvent;
     }
 
@@ -73,6 +110,125 @@ public class MainMenuUI : MonoBehaviour
     {
         InputSystem.onEvent -= OnInputEvent;
         HookBack(false);
+    }
+
+    private void Start()
+    {
+        SelectActiveCanvas();
+        ApplyActiveCanvasReferences();
+
+        mainMenuRT = panelMainMenu != null ? panelMainMenu.GetComponent<RectTransform>() : null;
+        exitConfirmRT = panelExitConfirm != null ? panelExitConfirm.GetComponent<RectTransform>() : null;
+
+        HideAllPanels();
+
+        if (logo != null)
+            SetLogoVisibleInstant(true);
+
+        if (panelMainMenu != null && mainMenuRT != null)
+        {
+            panelMainMenu.SetActive(true);
+            currentPanelRT = mainMenuRT;
+
+            SetPanelAnchoredX(currentPanelRT, 0f);
+            SetAlpha(currentPanelRT, 1f);
+            SetInteractable(currentPanelRT, true);
+        }
+
+        ClearUISelection();
+        ResetMenuFX(panelMainMenu);
+        PlayIntroOnPanel(panelMainMenu);
+
+        SetupVolumeSliders();
+
+        AudioManager.Instance?.PlayMenuMusic();
+    }
+
+    private void SelectActiveCanvas()
+    {
+        bool usePC = forcePCCanvas;
+
+        if (useAutoCanvas)
+        {
+            usePC =
+                Application.platform == RuntimePlatform.WindowsEditor ||
+                Application.platform == RuntimePlatform.WindowsPlayer ||
+                Application.platform == RuntimePlatform.OSXEditor ||
+                Application.platform == RuntimePlatform.OSXPlayer ||
+                Application.platform == RuntimePlatform.LinuxEditor ||
+                Application.platform == RuntimePlatform.LinuxPlayer;
+        }
+
+        activeCanvas = usePC ? pcCanvas : mobileCanvas;
+        isPCCanvasActive = usePC;
+
+        if (mobileCanvas != null && mobileCanvas.canvasRoot != null)
+            mobileCanvas.canvasRoot.SetActive(!usePC);
+
+        if (pcCanvas != null && pcCanvas.canvasRoot != null)
+            pcCanvas.canvasRoot.SetActive(usePC);
+    }
+
+    private void ApplyActiveCanvasReferences()
+    {
+        if (activeCanvas == null) return;
+
+        panelMainMenu = activeCanvas.panelMainMenu;
+        panelHistoria = activeCanvas.panelHistoria;
+        panelLogros = activeCanvas.panelLogros;
+        panelAjustes = activeCanvas.panelAjustes;
+        panelExitConfirm = activeCanvas.panelExitConfirm;
+        exitDialogBox = activeCanvas.exitDialogBox;
+        canvasRootGroup = activeCanvas.canvasRootGroup;
+        logo = activeCanvas.logo;
+
+        if (logo != null)
+        {
+            logoCanvasGroup = logo.GetComponent<CanvasGroup>();
+
+            if (logoCanvasGroup == null)
+                logoCanvasGroup = logo.AddComponent<CanvasGroup>();
+        }
+    }
+
+    private void SetupVolumeSliders()
+    {
+        if (activeCanvas == null || AudioManager.Instance == null) return;
+
+        if (activeCanvas.musicSlider != null)
+        {
+            activeCanvas.musicSlider.minValue = 0f;
+            activeCanvas.musicSlider.maxValue = 1f;
+            activeCanvas.musicSlider.wholeNumbers = false;
+
+            activeCanvas.musicSlider.SetValueWithoutNotify(AudioManager.Instance.GetMusicVolume());
+            activeCanvas.musicSlider.onValueChanged.RemoveAllListeners();
+            activeCanvas.musicSlider.onValueChanged.AddListener(AudioManager.Instance.SetMusicVolume);
+        }
+
+        if (activeCanvas.sfxSlider != null)
+        {
+            activeCanvas.sfxSlider.minValue = 0f;
+            activeCanvas.sfxSlider.maxValue = 1f;
+            activeCanvas.sfxSlider.wholeNumbers = false;
+
+            activeCanvas.sfxSlider.SetValueWithoutNotify(AudioManager.Instance.GetSfxVolume());
+            activeCanvas.sfxSlider.onValueChanged.RemoveAllListeners();
+            activeCanvas.sfxSlider.onValueChanged.AddListener(AudioManager.Instance.SetSfxVolume);
+        }
+    }
+
+    private void Update()
+    {
+        if (!backQueued) return;
+        backQueued = false;
+
+        if (isLoadingGame) return;
+
+        if (isTransitioning)
+            pendingBack = true;
+        else
+            HandleBackButton();
     }
 
     private void HookBack(bool enable)
@@ -85,7 +241,6 @@ public class MainMenuUI : MonoBehaviour
             pendingBack = false;
         }
 
-        // Activa ActionMap completo si existe
         if (backAction.action.actionMap != null)
         {
             if (enable) backAction.action.actionMap.Enable();
@@ -109,54 +264,18 @@ public class MainMenuUI : MonoBehaviour
         }
     }
 
-    private void Start()
-    {
-        mainMenuRT = panelMainMenu != null ? panelMainMenu.GetComponent<RectTransform>() : null;
-        exitConfirmRT = panelExitConfirm != null ? panelExitConfirm.GetComponent<RectTransform>() : null;
-
-        HideAllPanels();
-
-        if (panelMainMenu != null && mainMenuRT != null)
-        {
-            panelMainMenu.SetActive(true);
-            currentPanelRT = mainMenuRT;
-
-            SetPanelAnchoredX(currentPanelRT, 0f);
-            SetAlpha(currentPanelRT, 1f);
-            SetInteractable(currentPanelRT, true);
-        }
-
-        ClearUISelection();
-        ResetMenuFX(panelMainMenu);
-        PlayIntroOnPanel(panelMainMenu);
-    }
-
-    private void Update()
-    {
-        if (!backQueued) return;
-        backQueued = false;
-
-        if (isTransitioning)
-            pendingBack = true;
-        else
-            HandleBackButton();
-    }
-
     private void OnBackPerformed(InputAction.CallbackContext ctx)
     {
         backQueued = true;
     }
 
-    // ✅ Low-level: detecta Escape aunque Keyboard.current sea null (Android primer back)
     private void OnInputEvent(InputEventPtr eventPtr, InputDevice device)
     {
         if (!eventPtr.IsA<StateEvent>() && !eventPtr.IsA<DeltaStateEvent>())
             return;
 
-        // Si el dispositivo tiene KeyControl Escape, lo leemos
         if (device is Keyboard kb)
         {
-            // OJO: esto funciona incluso si Keyboard.current estaba null al inicio
             if (kb.escapeKey.ReadValueFromEvent(eventPtr) > 0.5f)
                 backQueued = true;
         }
@@ -182,13 +301,16 @@ public class MainMenuUI : MonoBehaviour
         OpenExitConfirm();
     }
 
-    // -------------------------
-    // BOTONES
-    // -------------------------
-
     public void OnPlayPressed()
     {
+        if (isLoadingGame) return;
+
+        isLoadingGame = true;
         Time.timeScale = 1f;
+        BlockGlobalInput(true);
+
+        AudioManager.Instance?.PlayUIButton();
+        AudioManager.Instance?.FadeOutCurrentMusic();
 
         if (levelLoader != null)
             levelLoader.LoadScene(gameSceneName);
@@ -196,23 +318,145 @@ public class MainMenuUI : MonoBehaviour
             SceneManager.LoadScene(gameSceneName);
     }
 
+    public void OnHistoriaPressed()
+    {
+        AudioManager.Instance?.PlayUIButton();
+        GoTo(panelHistoria);
+    }
 
-    public void OnHistoriaPressed() => GoTo(panelHistoria);
-    public void OnAchievementsPressed() => GoTo(panelLogros);
-    public void OnSettingsPressed() => GoTo(panelAjustes);
-    public void OnBackPressed() => GoTo(panelMainMenu);
+    public void OnAchievementsPressed()
+    {
+        AudioManager.Instance?.PlayUIButton();
+        GoTo(panelLogros);
+    }
 
-    public void OnQuitPressed() => OpenExitConfirm();
-    public void OnExitYesPressed() => Application.Quit();
-    public void OnExitNoPressed() => CloseExitConfirm();
+    public void OnSettingsPressed()
+    {
+        AudioManager.Instance?.PlayUIButton();
+        GoTo(panelAjustes);
+    }
 
-    // -------------------------
-    // EXIT CONFIRM
-    // -------------------------
+    public void OnBackPressed()
+    {
+        AudioManager.Instance?.PlayUIBack();
+        GoTo(panelMainMenu);
+    }
+
+    public void OnQuitPressed()
+    {
+        AudioManager.Instance?.PlayUIButton();
+        OpenExitConfirm();
+    }
+
+    public void OnExitYesPressed()
+    {
+        AudioManager.Instance?.PlayUIButton();
+        Application.Quit();
+    }
+
+    public void OnExitNoPressed()
+    {
+        AudioManager.Instance?.PlayUIBack();
+        CloseExitConfirm();
+    }
+
+    private void GoTo(GameObject panelToShow)
+    {
+        if (panelToShow == null) return;
+        if (isTransitioning) return;
+        if (isLoadingGame) return;
+
+        if (isExitConfirmOpen)
+            CloseExitConfirm();
+
+        RectTransform nextRT = panelToShow.GetComponent<RectTransform>();
+        if (nextRT == null) return;
+        if (currentPanelRT == nextRT) return;
+
+        UpdateLogoVisibility(panelToShow);
+        ClearUISelection();
+
+        if (currentPanelRT != null)
+            ResetMenuFX(currentPanelRT.gameObject);
+
+        if (transitionCo != null)
+            StopCoroutine(transitionCo);
+
+        transitionCo = StartCoroutine(TransitionPanels(currentPanelRT, nextRT));
+    }
+
+    private void UpdateLogoVisibility(GameObject targetPanel)
+    {
+        if (!isPCCanvasActive || logo == null) return;
+
+        bool shouldShowLogo = targetPanel == panelMainMenu;
+
+        bool shouldHideLogo =
+            targetPanel == panelHistoria ||
+            targetPanel == panelLogros ||
+            targetPanel == panelAjustes;
+
+        if (shouldShowLogo)
+            FadeLogo(true);
+        else if (shouldHideLogo)
+            FadeLogo(false);
+    }
+
+    private void FadeLogo(bool show)
+    {
+        if (logo == null || logoCanvasGroup == null) return;
+
+        if (logoFadeCo != null)
+            StopCoroutine(logoFadeCo);
+
+        logoFadeCo = StartCoroutine(FadeLogoRoutine(show));
+    }
+
+    private IEnumerator FadeLogoRoutine(bool show)
+    {
+        if (show)
+            logo.SetActive(true);
+
+        float startAlpha = logoCanvasGroup.alpha;
+        float endAlpha = show ? 1f : 0f;
+
+        float t = 0f;
+
+        while (t < logoFadeDuration)
+        {
+            t += Time.unscaledDeltaTime;
+
+            float n = Mathf.Clamp01(t / logoFadeDuration);
+            float eased = easeCurve != null ? easeCurve.Evaluate(n) : n;
+
+            logoCanvasGroup.alpha = Mathf.Lerp(startAlpha, endAlpha, eased);
+
+            yield return null;
+        }
+
+        logoCanvasGroup.alpha = endAlpha;
+
+        if (!show)
+            logo.SetActive(false);
+
+        logoFadeCo = null;
+    }
+
+    private void SetLogoVisibleInstant(bool show)
+    {
+        if (logo == null) return;
+
+        logo.SetActive(show);
+
+        if (logoCanvasGroup != null)
+            logoCanvasGroup.alpha = show ? 1f : 0f;
+    }
+
     private void OpenExitConfirm()
     {
         if (panelExitConfirm == null || exitConfirmRT == null) return;
         if (isExitConfirmOpen) return;
+        if (isLoadingGame) return;
 
         isExitConfirmOpen = true;
 
@@ -220,12 +464,17 @@ public class MainMenuUI : MonoBehaviour
         SetInteractable(exitConfirmRT, false);
         SetAlpha(exitConfirmRT, 0f);
 
-        if (currentPanelRT != null) SetInteractable(currentPanelRT, false);
+        if (currentPanelRT != null)
+            SetInteractable(currentPanelRT, false);
 
         ClearUISelection();
-        if (currentPanelRT != null) ResetMenuFX(currentPanelRT.gameObject);
 
-        if (exitAnimCo != null) StopCoroutine(exitAnimCo);
+        if (currentPanelRT != null)
+            ResetMenuFX(currentPanelRT.gameObject);
+
+        if (exitAnimCo != null)
+            StopCoroutine(exitAnimCo);
+
         exitAnimCo = StartCoroutine(AnimateExitConfirm(open: true));
     }
 
@@ -237,7 +486,9 @@ public class MainMenuUI : MonoBehaviour
         isExitConfirmOpen = false;
         ClearUISelection();
 
-        if (exitAnimCo != null) StopCoroutine(exitAnimCo);
+        if (exitAnimCo != null)
+            StopCoroutine(exitAnimCo);
+
         exitAnimCo = StartCoroutine(AnimateExitConfirm(open: false));
     }
 
@@ -258,6 +509,7 @@ public class MainMenuUI : MonoBehaviour
         while (t < exitAnimDuration)
         {
             t += Time.unscaledDeltaTime;
+
             float n = Mathf.Clamp01(t / exitAnimDuration);
             float eased = easeCurve != null ? easeCurve.Evaluate(n) : n;
 
@@ -298,27 +550,6 @@ public class MainMenuUI : MonoBehaviour
         exitAnimCo = null;
     }
 
-    // -------------------------
-    // TRANSICIONES
-    // -------------------------
-    private void GoTo(GameObject panelToShow)
-    {
-        if (panelToShow == null) return;
-        if (isTransitioning) return;
-
-        if (isExitConfirmOpen) CloseExitConfirm();
-
-        var nextRT = panelToShow.GetComponent<RectTransform>();
-        if (nextRT == null) return;
-        if (currentPanelRT == nextRT) return;
-
-        ClearUISelection();
-        if (currentPanelRT != null) ResetMenuFX(currentPanelRT.gameObject);
-
-        if (transitionCo != null) StopCoroutine(transitionCo);
-        transitionCo = StartCoroutine(TransitionPanels(currentPanelRT, nextRT));
-    }
-
     private IEnumerator TransitionPanels(RectTransform from, RectTransform to)
     {
         isTransitioning = true;
@@ -326,7 +557,7 @@ public class MainMenuUI : MonoBehaviour
 
         to.gameObject.SetActive(true);
 
-        bool goingBackToMain = (mainMenuRT != null && to == mainMenuRT);
+        bool goingBackToMain = mainMenuRT != null && to == mainMenuRT;
         float dir = goingBackToMain ? -1f : 1f;
 
         float fromStartX = 0f;
@@ -336,16 +567,21 @@ public class MainMenuUI : MonoBehaviour
         SetPanelAnchoredX(to, toStartX);
         SetInteractable(to, false);
 
-        if (from != null) SetInteractable(from, false);
+        if (from != null)
+            SetInteractable(from, false);
 
         if (useSoftFade)
         {
-            if (from != null) SetAlpha(from, 1f);
+            if (from != null)
+                SetAlpha(from, 1f);
+
             SetAlpha(to, softFadeMinAlpha);
         }
         else
         {
-            if (from != null) SetAlpha(from, 1f);
+            if (from != null)
+                SetAlpha(from, 1f);
+
             SetAlpha(to, 1f);
         }
 
@@ -358,12 +594,16 @@ public class MainMenuUI : MonoBehaviour
             float n = Mathf.Clamp01(t / transitionDuration);
             float eased = easeCurve != null ? easeCurve.Evaluate(n) : n;
 
-            if (from != null) SetPanelAnchoredX(from, Mathf.Lerp(fromStartX, fromEndX, eased));
+            if (from != null)
+                SetPanelAnchoredX(from, Mathf.Lerp(fromStartX, fromEndX, eased));
+
             SetPanelAnchoredX(to, Mathf.Lerp(toStartX, 0f, eased));
 
             if (useSoftFade)
             {
-                if (from != null) SetAlpha(from, Mathf.Lerp(1f, softFadeMinAlpha, eased));
+                if (from != null)
+                    SetAlpha(from, Mathf.Lerp(1f, softFadeMinAlpha, eased));
+
                 SetAlpha(to, Mathf.Lerp(softFadeMinAlpha, 1f, eased));
             }
 
@@ -403,9 +643,6 @@ public class MainMenuUI : MonoBehaviour
         }
     }
 
-    // -------------------------
-    // HELPERS
-    // -------------------------
     private void HideAllPanels()
     {
         SafeDisable(panelMainMenu);
@@ -421,10 +658,11 @@ public class MainMenuUI : MonoBehaviour
 
         go.SetActive(false);
 
-        var rt = go.GetComponent<RectTransform>();
-        if (rt != null) SetPanelAnchoredX(rt, 0f);
+        RectTransform rt = go.GetComponent<RectTransform>();
+        if (rt != null)
+            SetPanelAnchoredX(rt, 0f);
 
-        var cg = go.GetComponent<CanvasGroup>();
+        CanvasGroup cg = go.GetComponent<CanvasGroup>();
         if (cg != null)
         {
             cg.alpha = 1f;
@@ -442,6 +680,7 @@ public class MainMenuUI : MonoBehaviour
     private void BlockGlobalInput(bool block)
     {
         if (canvasRootGroup == null) return;
+
         canvasRootGroup.blocksRaycasts = !block;
         canvasRootGroup.interactable = !block;
     }
@@ -449,6 +688,7 @@ public class MainMenuUI : MonoBehaviour
     private void SetPanelAnchoredX(RectTransform rt, float x)
     {
         if (rt == null) return;
+
         Vector2 p = rt.anchoredPosition;
         p.x = x;
         rt.anchoredPosition = p;
@@ -457,14 +697,17 @@ public class MainMenuUI : MonoBehaviour
     private void SetAlpha(RectTransform rt, float a)
     {
         if (rt == null) return;
-        var cg = rt.GetComponent<CanvasGroup>();
-        if (cg != null) cg.alpha = a;
+
+        CanvasGroup cg = rt.GetComponent<CanvasGroup>();
+        if (cg != null)
+            cg.alpha = a;
     }
 
     private void SetInteractable(RectTransform rt, bool value)
     {
         if (rt == null) return;
-        var cg = rt.GetComponent<CanvasGroup>();
+
+        CanvasGroup cg = rt.GetComponent<CanvasGroup>();
         if (cg != null)
         {
             cg.interactable = value;
@@ -475,7 +718,9 @@ public class MainMenuUI : MonoBehaviour
     private void ResetMenuFX(GameObject root)
     {
         if (root == null) return;
-        var fx = root.GetComponentsInChildren<MenuButtonFX>(true);
+
+        MenuButtonFX[] fx = root.GetComponentsInChildren<MenuButtonFX>(true);
+
         for (int i = 0; i < fx.Length; i++)
             fx[i].ForceNormal();
     }
@@ -483,7 +728,9 @@ public class MainMenuUI : MonoBehaviour
     private void PlayIntroOnPanel(GameObject root)
     {
         if (root == null) return;
-        var fx = root.GetComponentsInChildren<MenuButtonFX>(true);
+
+        MenuButtonFX[] fx = root.GetComponentsInChildren<MenuButtonFX>(true);
+
         for (int i = 0; i < fx.Length; i++)
             fx[i].PlayIntro();
     }
