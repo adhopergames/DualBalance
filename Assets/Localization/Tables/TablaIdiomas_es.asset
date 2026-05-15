@@ -308,6 +308,15 @@ MonoBehaviour:
     m_Localized: Omitir
     m_Metadata:
       m_Items: []
+  - m_Id: 69
+    m_Localized: "Usa A/D o las flechas para cambiar de carril y evitar obst\xE1culos."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 70
+    m_Localized: Presiona J para usar Oscuridad y K para usar Luz. Cada pared se
+      destruye con su elemento opuesto.
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
     RefIds: []

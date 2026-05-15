@@ -287,6 +287,14 @@ MonoBehaviour:
     m_Key: UI_SKIP
     m_Metadata:
       m_Items: []
+  - m_Id: 69
+    m_Key: TUTORIAL_1_DESC_PC
+    m_Metadata:
+      m_Items: []
+  - m_Id: 70
+    m_Key: TUTORIAL_2_DESC_PC
+    m_Metadata:
+      m_Items: []
   m_Metadata:
     m_Items: []
   m_KeyGenerator:
