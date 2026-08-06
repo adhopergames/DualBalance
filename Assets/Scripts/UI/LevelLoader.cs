@@ -13,50 +13,90 @@ public class LevelLoader : MonoBehaviour
 
     private bool isLoading;
 
-    /// Carga por nombre (ej: "Game")
+    private void Start()
+    {
+        if (transition == null)
+        {
+            return;
+        }
+
+        /*
+         * Al entrar a la escena Game, el tutorial puede colocar
+         * Time.timeScale en 0 inmediatamente.
+         *
+         * UnscaledTime permite que la animación inicial del loader
+         * termine aunque el gameplay esté pausado.
+         */
+        StartCoroutine(AllowInitialTransitionToFinish());
+    }
+
+    private IEnumerator AllowInitialTransitionToFinish()
+    {
+        transition.updateMode = AnimatorUpdateMode.UnscaledTime;
+        transition.cullingMode = AnimatorCullingMode.AlwaysAnimate;
+
+        yield return new WaitForSecondsRealtime(transitionTime);
+
+        transition.updateMode = AnimatorUpdateMode.Normal;
+    }
+
     public void LoadScene(string sceneName)
     {
-        if (isLoading) return;
+        if (isLoading)
+        {
+            return;
+        }
+
         StartCoroutine(LoadSceneRoutine(sceneName));
     }
 
-    /// Carga por build index
     public void LoadScene(int buildIndex)
     {
-        if (isLoading) return;
+        if (isLoading)
+        {
+            return;
+        }
+
         StartCoroutine(LoadSceneRoutine(buildIndex));
     }
 
-    /// Recarga escena actual
     public void ReloadCurrentScene()
     {
-        if (isLoading) return;
-        int idx = SceneManager.GetActiveScene().buildIndex;
-        StartCoroutine(LoadSceneRoutine(idx));
+        if (isLoading)
+        {
+            return;
+        }
+
+        int currentIndex = SceneManager.GetActiveScene().buildIndex;
+        StartCoroutine(LoadSceneRoutine(currentIndex));
     }
 
-    /// Carga la siguiente escena en Build Settings
     public void LoadNextScene()
     {
-        if (isLoading) return;
-        int next = SceneManager.GetActiveScene().buildIndex + 1;
-        StartCoroutine(LoadSceneRoutine(next));
+        if (isLoading)
+        {
+            return;
+        }
+
+        int nextIndex = SceneManager.GetActiveScene().buildIndex + 1;
+        StartCoroutine(LoadSceneRoutine(nextIndex));
     }
 
     private IEnumerator LoadSceneRoutine(string sceneName)
     {
         isLoading = true;
 
-        // Asegura que el juego no se quede pausado (por tu GameManager/ads)
         Time.timeScale = 1f;
 
         if (transition != null)
         {
+            transition.updateMode = AnimatorUpdateMode.UnscaledTime;
+            transition.cullingMode = AnimatorCullingMode.AlwaysAnimate;
+
             transition.ResetTrigger(triggerName);
             transition.SetTrigger(triggerName);
         }
 
-        // Realtime = no se rompe si Time.timeScale estaba en 0
         yield return new WaitForSecondsRealtime(transitionTime);
 
         SceneManager.LoadScene(sceneName);
@@ -70,6 +110,9 @@ public class LevelLoader : MonoBehaviour
 
         if (transition != null)
         {
+            transition.updateMode = AnimatorUpdateMode.UnscaledTime;
+            transition.cullingMode = AnimatorCullingMode.AlwaysAnimate;
+
             transition.ResetTrigger(triggerName);
             transition.SetTrigger(triggerName);
         }

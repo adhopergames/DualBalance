@@ -11809,9 +11809,13 @@ MonoBehaviour:
   musicSource: {fileID: 1552026037}
   sfxSource: {fileID: 442069133}
   menuMusic: {fileID: 8300000, guid: 570cd041d25b07c4b8d831b87ae22d6b, type: 3}
-  gameMusic: {fileID: 0}
-  playMenuMusicOnStart: 1
-  musicFadeDuration: 0.8
+  gameMusic: {fileID: 8300000, guid: 4f39e848e3454d44da8d0b86a76ee141, type: 3}
+  menuMusicMultiplier: 1
+  gameMusicMultiplier: 0.4
+  mainMenuSceneName: MainMenu
+  gameSceneName: Game
+  fadeOutDuration: 0.35
+  fadeInDuration: 0.55
   sfxEntries:
   - id: 8
     clip: {fileID: 8300000, guid: f0b8e9ec068d0f941967a098e04be328, type: 3}
