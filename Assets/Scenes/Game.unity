@@ -9260,11 +9260,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f6debfea39a98c4409b267a86c40601c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::AdManager
-  androidGameId: 6031281
-  iOSGameId: 6031280
-  idAndroidAd: Rewarded_Android
-  idIOSAd: Rewarded_iOS
-  testMode: 1
+  androidRewardedId: ca-app-pub-7911615200205097/2013465959
+  iosRewardedId: 
+  useTestAds: 1
 --- !u!4 &670993779
 Transform:
   m_ObjectHideFlags: 0
@@ -19017,7 +19015,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 54e3f084e4cedcc4cb5254a2b1184cf0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerCombat
-  inputSource: {fileID: 1545923324}
+  inputSource: {fileID: 56091943}
   attackFeedback: {fileID: 1690564212}
 --- !u!114 &1690564202
 MonoBehaviour:
@@ -19032,7 +19030,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerMovement
   laneManager: {fileID: 1649370088}
-  inputSource: {fileID: 1545923324}
+  inputSource: {fileID: 56091943}
   baseMoveSpeed: 18
   useAdaptiveLaneSpeed: 1
   minLaneChangeTime: 0.04
@@ -28220,6 +28218,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1627066243046574477, guid: b32d745895ee67d49983ec4bdbefc860, type: 3}
+      propertyPath: m_UpdateMode
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2332887215566333712, guid: b32d745895ee67d49983ec4bdbefc860, type: 3}
       propertyPath: m_LocalPosition.x
       value: -928.8938

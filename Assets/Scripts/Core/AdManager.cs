@@ -1,45 +1,48 @@
+using GoogleMobileAds.Api;
 using UnityEngine;
-using UnityEngine.Advertisements;
 
 /// <summary>
-/// Rewarded Ads simple y estable:
-/// - Inicializa una vez (DontDestroyOnLoad)
-/// - Precarga rewarded al iniciar
-/// - ShowRewarded solo si está listo (si no, vuelve a cargar)
-/// - Recarga después de cada show
+/// Maneja el anuncio recompensado de AdMob.
+///
+/// - Se mantiene entre escenas.
+/// - Inicializa Google Mobile Ads una sola vez.
+/// - Precarga el anuncio recompensado.
+/// - Revive al jugador únicamente cuando recibe la recompensa.
+/// - Recarga un anuncio nuevo después de cerrarlo.
 /// </summary>
-public class AdManager : MonoBehaviour,
-    IUnityAdsInitializationListener,
-    IUnityAdsLoadListener,
-    IUnityAdsShowListener
+public class AdManager : MonoBehaviour
 {
     public static AdManager Instance;
 
-    [Header("Game IDs")]
-    public string androidGameId;
-    public string iOSGameId;
+    [Header("AdMob Rewarded IDs")]
+    [SerializeField]
+    private string androidRewardedId =
+        "ca-app-pub-7911615200205097/2013465959";
 
-    [Header("Placement IDs (Rewarded)")]
-    public string idAndroidAd;
-    public string idIOSAd;
+    [SerializeField]
+    private string iosRewardedId = "";
 
-    [Header("Settings")]
-    public bool testMode = true;
+    [Header("Testing")]
+    [Tooltip("Usa el ID oficial de prueba de Google mientras desarrollas.")]
+    [SerializeField]
+    private bool useTestAds = true;
 
-    private string gameIdSelected;
-    private string rewardedPlacementId;
+    private const string AndroidRewardedTestId =
+        "ca-app-pub-3940256099942544/5224354917";
+
+    private RewardedAd rewardedAd;
+    private string rewardedAdUnitId;
 
     private bool isInitialized;
     private bool isLoading;
-    private bool isRewardedReady;
 
-    public bool IsRewardedReady => isInitialized && isRewardedReady;
+    public bool IsRewardedReady =>
+        isInitialized &&
+        rewardedAd != null &&
+        rewardedAd.CanShowAd();
 
     private void Awake()
     {
-        // -------------------------
-        // Singleton seguro
-        // -------------------------
         if (Instance != null && Instance != this)
         {
             Destroy(gameObject);
@@ -49,129 +52,164 @@ public class AdManager : MonoBehaviour,
         Instance = this;
         DontDestroyOnLoad(gameObject);
 
+        SelectAdUnitId();
         InitializeAds();
+    }
+
+    private void SelectAdUnitId()
+    {
+#if UNITY_ANDROID
+        rewardedAdUnitId = useTestAds
+            ? AndroidRewardedTestId
+            : androidRewardedId;
+#elif UNITY_IOS
+        rewardedAdUnitId = iosRewardedId;
+#else
+        rewardedAdUnitId = AndroidRewardedTestId;
+#endif
     }
 
     private void InitializeAds()
     {
-#if UNITY_ANDROID
-        gameIdSelected = androidGameId;
-        rewardedPlacementId = idAndroidAd;
-#elif UNITY_IOS
-        gameIdSelected = iOSGameId;
-        rewardedPlacementId = idIOSAd;
-#else
-        gameIdSelected = androidGameId;
-        rewardedPlacementId = idAndroidAd;
-#endif
-
-        isInitialized = false;
-        isLoading = false;
-        isRewardedReady = false;
-
-        if (!Advertisement.isInitialized)
+        if (isInitialized)
         {
-            Advertisement.Initialize(gameIdSelected, testMode, this);
+            return;
         }
-        else
+
+        MobileAds.Initialize(initializationStatus =>
         {
             isInitialized = true;
+
+            Debug.Log("AdMob: inicialización completada.");
+
             LoadRewarded();
-        }
+        });
     }
 
-    public void OnInitializationComplete()
-    {
-        isInitialized = true;
-
-        // ✅ Precarga inicial
-        LoadRewarded();
-    }
-
-    public void OnInitializationFailed(UnityAdsInitializationError error, string message)
-    {
-        Debug.LogError($"Ads: Init FAILED => {error} - {message}");
-        isInitialized = false;
-        isRewardedReady = false;
-        isLoading = false;
-    }
-
-    /// <summary>
-    /// Precarga rewarded.
-    /// </summary>
     public void LoadRewarded()
     {
-        if (!isInitialized) return;
-        if (isLoading) return;
-        if (isRewardedReady) return; // ya está listo
+        if (!isInitialized)
+        {
+            return;
+        }
+
+        if (isLoading)
+        {
+            return;
+        }
+
+        if (rewardedAd != null && rewardedAd.CanShowAd())
+        {
+            return;
+        }
 
         isLoading = true;
-        Advertisement.Load(rewardedPlacementId, this);
+
+        DestroyRewardedAd();
+
+        AdRequest request = new AdRequest();
+
+        RewardedAd.Load(
+            rewardedAdUnitId,
+            request,
+            (RewardedAd ad, LoadAdError error) =>
+            {
+                isLoading = false;
+
+                if (error != null || ad == null)
+                {
+                    Debug.LogError(
+                        $"AdMob: rewarded no pudo cargar. {error}"
+                    );
+
+                    rewardedAd = null;
+                    return;
+                }
+
+                rewardedAd = ad;
+
+                RegisterRewardedEvents(rewardedAd);
+
+                Debug.Log("AdMob: rewarded cargado correctamente.");
+            }
+        );
     }
 
-    public void OnUnityAdsAdLoaded(string placementId)
-    {
-        if (placementId != rewardedPlacementId) return;
-
-        isLoading = false;
-        isRewardedReady = true;
-    }
-
-    public void OnUnityAdsFailedToLoad(string placementId, UnityAdsLoadError error, string message)
-    {
-        if (placementId != rewardedPlacementId) return;
-
-        Debug.LogError($"Ads: Load FAILED => {error} - {message}");
-        isLoading = false;
-        isRewardedReady = false;
-    }
-
-    /// <summary>
-    /// Llamado por UI. Si está listo, lo muestra. Si no, intenta cargar.
-    /// </summary>
     public void ShowRewarded()
     {
-        if (!isInitialized) return;
-
-        if (!isRewardedReady)
+        if (!IsRewardedReady)
         {
-            // Si no está listo, pedimos carga y listo (UI mostrará "Cargando...")
+            Debug.LogWarning(
+                "AdMob: el rewarded todavía no está disponible."
+            );
+
             LoadRewarded();
             return;
         }
 
-        // Consumimos ready (hay que recargar luego)
-        isRewardedReady = false;
-
-        Advertisement.Show(rewardedPlacementId, this);
-    }
-
-    public void OnUnityAdsShowStart(string placementId) { }
-
-    public void OnUnityAdsShowClick(string placementId) { }
-
-    public void OnUnityAdsShowFailure(string placementId, UnityAdsShowError error, string message)
-    {
-        Debug.LogError($"Ads: Show FAILED => {error} - {message}");
-
-        // ✅ Recargar para próximo intento
-        isRewardedReady = false;
-        isLoading = false;
-        LoadRewarded();
-    }
-
-    public void OnUnityAdsShowComplete(string placementId, UnityAdsShowCompletionState state)
-    {
-        if (placementId != rewardedPlacementId) return;
-
-        // ✅ Recargar para el próximo continue
-        isRewardedReady = false;
-        isLoading = false;
-        LoadRewarded();
-
-        if (state == UnityAdsShowCompletionState.COMPLETED)
+        rewardedAd.Show(reward =>
         {
-            GameManager.Instance.ContinueAfterAd();
+            Debug.Log(
+                $"AdMob: recompensa recibida. " +
+                $"Tipo: {reward.Type}, cantidad: {reward.Amount}"
+            );
+
+            if (GameManager.Instance != null)
+            {
+                GameManager.Instance.ContinueAfterAd();
+            }
+            else
+            {
+                Debug.LogError(
+                    "AdMob: no se encontró GameManager.Instance."
+                );
+            }
+        });
+    }
+
+    private void RegisterRewardedEvents(RewardedAd ad)
+    {
+        ad.OnAdFullScreenContentOpened += () =>
+        {
+            Debug.Log("AdMob: rewarded abierto.");
+        };
+
+        ad.OnAdFullScreenContentClosed += () =>
+        {
+            Debug.Log("AdMob: rewarded cerrado.");
+
+            DestroyRewardedAd();
+            LoadRewarded();
+        };
+
+        ad.OnAdFullScreenContentFailed += error =>
+        {
+            Debug.LogError(
+                $"AdMob: rewarded falló al mostrarse. {error}"
+            );
+
+            DestroyRewardedAd();
+            LoadRewarded();
+        };
+    }
+
+    private void DestroyRewardedAd()
+    {
+        if (rewardedAd == null)
+        {
+            return;
+        }
+
+        rewardedAd.Destroy();
+        rewardedAd = null;
+    }
+
+    private void OnDestroy()
+    {
+        if (Instance == this)
+        {
+            DestroyRewardedAd();
+            Instance = null;
         }
     }
 }
