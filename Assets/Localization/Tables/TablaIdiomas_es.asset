@@ -317,6 +317,10 @@ MonoBehaviour:
       destruye con su elemento opuesto.
     m_Metadata:
       m_Items: []
+  - m_Id: 68327594099412992
+    m_Localized: Un Continuar
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
     RefIds: []

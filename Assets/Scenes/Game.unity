@@ -790,7 +790,6 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
-  levelLoader: {fileID: 1663776816}
 --- !u!114 &75620147
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5557,7 +5556,7 @@ MonoBehaviour:
     m_TableReference:
       m_TableCollectionName: GUID:29f8cc7658e670646904a10b6594754f
     m_TableEntryReference:
-      m_KeyId: 51
+      m_KeyId: 68327594099412992
       m_Key: 
     m_FallbackState: 0
     m_WaitForCompletion: 0
@@ -9262,7 +9261,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::AdManager
   androidRewardedId: ca-app-pub-7911615200205097/2013465959
   iosRewardedId: 
+  androidInterstitialId: ca-app-pub-7911615200205097/2141458465
+  iosInterstitialId: 
   useTestAds: 1
+  minRunsBetweenInterstitial: 6
+  maxRunsBetweenInterstitial: 7
 --- !u!4 &670993779
 Transform:
   m_ObjectHideFlags: 0
@@ -18898,7 +18901,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::LaneManager
   laneCount: 3
   centerX: 0
-  widthPercent: 0.72
+  widthPercent: 0.7
   clampPlayableWidth: 1
   maxPlayableWorldWidth: 4.9
 --- !u!4 &1649370089
@@ -18916,17 +18919,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1663776816 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 5004965414425030035, guid: b32d745895ee67d49983ec4bdbefc860, type: 3}
-  m_PrefabInstance: {fileID: 1976641861}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ae2fb718e8a63dd4cb4edd46f99ac96e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::LevelLoader
 --- !u!1 &1668438225
 GameObject:
   m_ObjectHideFlags: 0
@@ -21987,7 +21979,6 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
-  levelLoader: {fileID: 1663776816}
 --- !u!114 &1885127074
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -27189,7 +27180,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::GameManager
   config: {fileID: 11400000, guid: 8f826d387c29f8a49885f3579f000164, type: 2}
   scorePerSecond: 15
-  levelLoader: {fileID: 1663776816}
   playerEnergy: {fileID: 1690564203}
   playerMovement: {fileID: 1690564202}
   playerTransform: {fileID: 1690564205}
@@ -28268,7 +28258,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3690628176104007322, guid: b32d745895ee67d49983ec4bdbefc860, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4444827074917813038, guid: b32d745895ee67d49983ec4bdbefc860, type: 3}
       propertyPath: m_IsActive
@@ -28280,6 +28270,18 @@ PrefabInstance:
       objectReference: {fileID: 1976641862}
     - target: {fileID: 5004965414425030035, guid: b32d745895ee67d49983ec4bdbefc860, type: 3}
       propertyPath: transitionTime
+      value: 0.2167
+      objectReference: {fileID: 0}
+    - target: {fileID: 5004965414425030035, guid: b32d745895ee67d49983ec4bdbefc860, type: 3}
+      propertyPath: sceneWarmupTime
+      value: 0.2167
+      objectReference: {fileID: 0}
+    - target: {fileID: 5004965414425030035, guid: b32d745895ee67d49983ec4bdbefc860, type: 3}
+      propertyPath: entryTransitionTime
+      value: 0.2167
+      objectReference: {fileID: 0}
+    - target: {fileID: 5004965414425030035, guid: b32d745895ee67d49983ec4bdbefc860, type: 3}
+      propertyPath: maximumTransitionWait
       value: 0.2167
       objectReference: {fileID: 0}
     - target: {fileID: 6723774877640322317, guid: b32d745895ee67d49983ec4bdbefc860, type: 3}

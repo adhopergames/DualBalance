@@ -7,7 +7,7 @@ using UnityEngine.SceneManagement;
 public class GameOverUI : MonoBehaviour
 {
     [Header("UI")]
-    public GameObject panel;                 // CanvasInterfaz/GameOver
+    public GameObject panel;
     public TextMeshProUGUI scoreText;
     public TextMeshProUGUI bestText;
     public TextMeshProUGUI newRecordText;
@@ -20,25 +20,25 @@ public class GameOverUI : MonoBehaviour
     public string menuSceneName = "MainMenu";
 
     [Header("Other UI to Hide")]
-    [Tooltip("Botón de pausa (icono). Se ocultará mientras GameOver esté visible.")]
+    [Tooltip("Botón de pausa. Se ocultará mientras GameOver esté visible.")]
     [SerializeField] private GameObject pauseButton;
 
-    [Tooltip("Opcional: HUD root (score/energía). Si lo asignas, se ocultará durante GameOver.")]
+    [Tooltip("Opcional: HUD root. Se ocultará durante GameOver.")]
     [SerializeField] private GameObject hudRoot;
 
-    [Header("Animation (code)")]
+    [Header("Animation")]
     [SerializeField] private float animInDuration = 0.18f;
     [SerializeField] private float animOutDuration = 0.12f;
+
     [Range(0.5f, 1f)]
     [SerializeField] private float popStartScale = 0.92f;
-    [SerializeField] private AnimationCurve easeCurve = AnimationCurve.EaseInOut(0, 0, 1, 1);
 
-    [Header("Level Loader (en esta escena)")]
-    [SerializeField] private LevelLoader levelLoader;
+    [SerializeField]
+    private AnimationCurve easeCurve =
+        AnimationCurve.EaseInOut(0f, 0f, 1f, 1f);
 
     private bool isPendingVisible;
 
-    // Anim internals
     private CanvasGroup panelGroup;
     private RectTransform panelRT;
     private Coroutine animCo;
@@ -51,14 +51,20 @@ public class GameOverUI : MonoBehaviour
             panelRT = panel.GetComponent<RectTransform>();
 
             panelGroup = panel.GetComponent<CanvasGroup>();
+
             if (panelGroup == null)
+            {
                 panelGroup = panel.AddComponent<CanvasGroup>();
+            }
         }
     }
 
     private void Start()
     {
-        if (panel != null) panel.SetActive(false);
+        if (panel != null)
+        {
+            panel.SetActive(false);
+        }
 
         if (panelGroup != null)
         {
@@ -68,16 +74,27 @@ public class GameOverUI : MonoBehaviour
         }
 
         if (panelRT != null)
-            panelRT.localScale = Vector3.one * popStartScale;
+        {
+            panelRT.localScale =
+                Vector3.one * popStartScale;
+        }
 
         if (GameManager.Instance != null)
         {
-            GameManager.Instance.OnGameOver += HandleGameOverFinal;
-            GameManager.Instance.OnGameOverPending += HandleGameOverPending;
-            GameManager.Instance.OnRevive += HandleRevive;
+            GameManager.Instance.OnGameOver +=
+                HandleGameOverFinal;
+
+            GameManager.Instance.OnGameOverPending +=
+                HandleGameOverPending;
+
+            GameManager.Instance.OnRevive +=
+                HandleRevive;
         }
 
-        if (continueButton != null) continueButton.gameObject.SetActive(false);
+        if (continueButton != null)
+        {
+            continueButton.gameObject.SetActive(false);
+        }
 
         isPendingVisible = false;
         isVisible = false;
@@ -85,57 +102,101 @@ public class GameOverUI : MonoBehaviour
 
     private void Update()
     {
-        // Mientras estemos en pending, actualizamos el texto del botón según si el ad está listo.
-        if (!isPendingVisible) return;
-        if (continueButtonLabel == null) return;
+        if (!isPendingVisible)
+            return;
 
-        bool ready = (AdManager.Instance != null && AdManager.Instance.IsRewardedReady);
-        continueButtonLabel.text = ready ? "Continuar (Ad)" : "Continuar (Cargando...)";
+        if (continueButtonLabel == null)
+            return;
+
+        bool ready =
+            AdManager.Instance != null &&
+            AdManager.Instance.IsRewardedReady;
+
+        continueButtonLabel.text =
+            ready
+                ? "Continuar (Ad)"
+                : "Continuar (Cargando...)";
     }
 
     private void OnDestroy()
     {
         if (GameManager.Instance != null)
         {
-            GameManager.Instance.OnGameOver -= HandleGameOverFinal;
-            GameManager.Instance.OnGameOverPending -= HandleGameOverPending;
-            GameManager.Instance.OnRevive -= HandleRevive;
+            GameManager.Instance.OnGameOver -=
+                HandleGameOverFinal;
+
+            GameManager.Instance.OnGameOverPending -=
+                HandleGameOverPending;
+
+            GameManager.Instance.OnRevive -=
+                HandleRevive;
         }
     }
 
-    // -------------------------
-    // EVENTS FROM GAMEMANAGER
-    // -------------------------
+    // =====================================================
+    // GAMEMANAGER EVENTS
+    // =====================================================
 
-    private void HandleGameOverPending(int scoreNow, int bestScore, bool canContinue, bool isNewRecordNow)
+    private void HandleGameOverPending(
+        int scoreNow,
+        int bestScore,
+        bool canContinue,
+        bool isNewRecordNow
+    )
     {
         isPendingVisible = true;
 
-        if (scoreText != null) scoreText.text = scoreNow.ToString();
-        if (bestText != null) bestText.text = bestScore.ToString();
-        if (newRecordText != null) newRecordText.gameObject.SetActive(isNewRecordNow);
+        if (scoreText != null)
+            scoreText.text = scoreNow.ToString();
+
+        if (bestText != null)
+            bestText.text = bestScore.ToString();
+
+        if (newRecordText != null)
+            newRecordText.gameObject.SetActive(
+                isNewRecordNow
+            );
 
         if (continueButton != null)
         {
-            bool show = canContinue && AdManager.Instance != null;
+            bool show =
+                canContinue &&
+                AdManager.Instance != null;
+
             continueButton.gameObject.SetActive(show);
 
-            // Pedimos precarga del rewarded cuando entramos a pending
-            if (show) AdManager.Instance.LoadRewarded();
+            if (show)
+            {
+                AdManager.Instance.LoadRewarded();
+            }
         }
 
         ShowGameOver(true);
     }
 
-    private void HandleGameOverFinal(int scoreFinal, int bestScore, bool isNewRecord)
+    private void HandleGameOverFinal(
+        int scoreFinal,
+        int bestScore,
+        bool isNewRecord
+    )
     {
         isPendingVisible = false;
 
-        if (scoreText != null) scoreText.text = scoreFinal.ToString();
-        if (bestText != null) bestText.text = bestScore.ToString();
-        if (newRecordText != null) newRecordText.gameObject.SetActive(isNewRecord);
+        if (scoreText != null)
+            scoreText.text = scoreFinal.ToString();
 
-        if (continueButton != null) continueButton.gameObject.SetActive(false);
+        if (bestText != null)
+            bestText.text = bestScore.ToString();
+
+        if (newRecordText != null)
+            newRecordText.gameObject.SetActive(
+                isNewRecord
+            );
+
+        if (continueButton != null)
+        {
+            continueButton.gameObject.SetActive(false);
+        }
 
         ShowGameOver(true);
     }
@@ -146,21 +207,31 @@ public class GameOverUI : MonoBehaviour
         ShowGameOver(false);
     }
 
-    // -------------------------
-    // SHOW / HIDE (ANIMATED)
-    // -------------------------
+    // =====================================================
+    // SHOW / HIDE
+    // =====================================================
 
     private void ShowGameOver(bool show)
     {
-        if (isVisible == show) return;
+        if (isVisible == show)
+            return;
+
         isVisible = show;
 
-        // Ocultar UI de juego
-        if (pauseButton != null) pauseButton.SetActive(!show);
-        if (hudRoot != null) hudRoot.SetActive(!show); // opcional
+        if (pauseButton != null)
+            pauseButton.SetActive(!show);
 
-        if (animCo != null) StopCoroutine(animCo);
-        animCo = StartCoroutine(AnimatePanel(show));
+        if (hudRoot != null)
+            hudRoot.SetActive(!show);
+
+        if (animCo != null)
+        {
+            StopCoroutine(animCo);
+        }
+
+        animCo = StartCoroutine(
+            AnimatePanel(show)
+        );
     }
 
     private IEnumerator AnimatePanel(bool open)
@@ -171,13 +242,21 @@ public class GameOverUI : MonoBehaviour
             yield break;
         }
 
-        float duration = open ? animInDuration : animOutDuration;
+        float duration =
+            open
+                ? animInDuration
+                : animOutDuration;
 
         float a0 = open ? 0f : 1f;
         float a1 = open ? 1f : 0f;
 
-        Vector3 s0 = Vector3.one * (open ? popStartScale : 1f);
-        Vector3 s1 = Vector3.one * (open ? 1f : popStartScale);
+        Vector3 s0 =
+            Vector3.one *
+            (open ? popStartScale : 1f);
+
+        Vector3 s1 =
+            Vector3.one *
+            (open ? 1f : popStartScale);
 
         if (open)
         {
@@ -187,7 +266,10 @@ public class GameOverUI : MonoBehaviour
             panelGroup.interactable = false;
             panelGroup.blocksRaycasts = false;
 
-            if (panelRT != null) panelRT.localScale = s0;
+            if (panelRT != null)
+            {
+                panelRT.localScale = s0;
+            }
         }
         else
         {
@@ -196,22 +278,41 @@ public class GameOverUI : MonoBehaviour
         }
 
         float t = 0f;
+
         while (t < duration)
         {
-            t += Time.unscaledDeltaTime; // ✅ funciona aunque haya Time.timeScale 0 en pending
-            float n = Mathf.Clamp01(t / duration);
-            float eased = easeCurve != null ? easeCurve.Evaluate(n) : n;
+            t += Time.unscaledDeltaTime;
 
-            panelGroup.alpha = Mathf.Lerp(a0, a1, eased);
+            float n =
+                Mathf.Clamp01(t / duration);
+
+            float eased =
+                easeCurve != null
+                    ? easeCurve.Evaluate(n)
+                    : n;
+
+            panelGroup.alpha =
+                Mathf.Lerp(a0, a1, eased);
 
             if (panelRT != null)
-                panelRT.localScale = Vector3.Lerp(s0, s1, eased);
+            {
+                panelRT.localScale =
+                    Vector3.Lerp(
+                        s0,
+                        s1,
+                        eased
+                    );
+            }
 
             yield return null;
         }
 
         panelGroup.alpha = a1;
-        if (panelRT != null) panelRT.localScale = s1;
+
+        if (panelRT != null)
+        {
+            panelRT.localScale = s1;
+        }
 
         if (open)
         {
@@ -222,41 +323,72 @@ public class GameOverUI : MonoBehaviour
         {
             panel.SetActive(false);
 
-            // Al cerrar (revive), regresamos UI de juego
-            if (pauseButton != null) pauseButton.SetActive(true);
-            if (hudRoot != null) hudRoot.SetActive(true);
+            if (pauseButton != null)
+                pauseButton.SetActive(true);
+
+            if (hudRoot != null)
+                hudRoot.SetActive(true);
         }
 
         animCo = null;
     }
 
-    // -------------------------
+    // =====================================================
     // BUTTONS
-    // -------------------------
+    // =====================================================
 
     public void OnRetryPressed()
     {
         AudioManager.Instance?.StopAllSFX();
-        GameManager.Instance.Restart();
+
+        /*
+         * GameManager.Restart ya utiliza
+         * LevelLoader.Instance.
+         */
+        GameManager.Instance?.Restart();
     }
 
     public void OnMenuPressed()
     {
         AudioManager.Instance?.StopAllSFX();
 
+        // Quitar cualquier efecto temporal de pausa
+        // antes de volver al menú.
+        AudioManager.Instance?.ResetMusicStateImmediate();
+        AudioManager.Instance?.ResetGameOverMusicImmediate();
+
         Time.timeScale = 1f;
 
-        if (levelLoader != null)
-            levelLoader.LoadScene(menuSceneName);
+        /*
+         * El LevelLoader es persistente.
+         * Ya NO buscamos uno dentro de Game.
+         */
+        if (LevelLoader.Instance != null)
+        {
+            LevelLoader.Instance.LoadScene(
+                menuSceneName
+            );
+        }
         else
-            SceneManager.LoadScene(menuSceneName);
+        {
+            Debug.LogWarning(
+                "GameOverUI: no existe LevelLoader.Instance. " +
+                "Cargando MainMenu directamente."
+            );
+
+            SceneManager.LoadScene(
+                menuSceneName
+            );
+        }
     }
 
     public void OnContinuePressed()
     {
         AudioManager.Instance?.StopAllSFX();
 
-        if (AdManager.Instance == null) return;
+        if (AdManager.Instance == null)
+            return;
+
         AdManager.Instance.ShowRewarded();
     }
 }

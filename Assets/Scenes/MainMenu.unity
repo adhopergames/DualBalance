@@ -5139,7 +5139,6 @@ MonoBehaviour:
   useAutoCanvas: 0
   forcePCCanvas: 0
   backAction: {fileID: 0}
-  levelLoader: {fileID: 1281725696}
   transitionDuration: 0.25
   slideDistance: 2000
   easeCurve:
@@ -11819,24 +11818,34 @@ MonoBehaviour:
   sfxEntries:
   - id: 8
     clip: {fileID: 8300000, guid: f0b8e9ec068d0f941967a098e04be328, type: 3}
+    volume: 1
   - id: 9
     clip: {fileID: 8300000, guid: a53af570cf4e42849af6c6f30e52c900, type: 3}
+    volume: 1
   - id: 0
     clip: {fileID: 8300000, guid: 608bdbcf67e41e3419d508dfca9d8375, type: 3}
+    volume: 1.2
   - id: 1
     clip: {fileID: 8300000, guid: 0162c7980ea6ea54eb0c286c89bf37aa, type: 3}
+    volume: 1.3
   - id: 2
     clip: {fileID: 8300000, guid: 0213b8aa343647a49bca0eb07c2dddb4, type: 3}
+    volume: 1.4
   - id: 3
     clip: {fileID: 8300000, guid: 709a3fb9578b89645b73d8e46b40e3d2, type: 3}
+    volume: 1.2
   - id: 4
     clip: {fileID: 8300000, guid: 6fa193956d0d95342855a1d7612b3d38, type: 3}
+    volume: 1.3
   - id: 5
     clip: {fileID: 8300000, guid: 70a8a7b789df25d459268eadded01ac6, type: 3}
+    volume: 1.3
   - id: 6
     clip: {fileID: 8300000, guid: b18e9679c44b14a4cbf3ffbf54076e18, type: 3}
+    volume: 1.2
   - id: 7
     clip: {fileID: 8300000, guid: 7d5d0b38a6a2a7f49b9ca7d0e5edbe6b, type: 3}
+    volume: 1.1
   musicVolume: 1
   sfxVolume: 1
 --- !u!4 &1264958757
@@ -11993,17 +12002,6 @@ MonoBehaviour:
     m_VarianceClampScale: 0.9
     m_ContrastAdaptiveSharpening: 0
   m_Version: 2
---- !u!114 &1281725696 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 5004965414425030035, guid: b32d745895ee67d49983ec4bdbefc860, type: 3}
-  m_PrefabInstance: {fileID: 8371590992359200493}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ae2fb718e8a63dd4cb4edd46f99ac96e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::LevelLoader
 --- !u!1 &1319645505
 GameObject:
   m_ObjectHideFlags: 0
@@ -19172,7 +19170,31 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 46884157}
     - target: {fileID: 5004965414425030035, guid: b32d745895ee67d49983ec4bdbefc860, type: 3}
+      propertyPath: openDuration
+      value: 0.2167
+      objectReference: {fileID: 0}
+    - target: {fileID: 5004965414425030035, guid: b32d745895ee67d49983ec4bdbefc860, type: 3}
+      propertyPath: warmupFrames
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5004965414425030035, guid: b32d745895ee67d49983ec4bdbefc860, type: 3}
+      propertyPath: closeDuration
+      value: 0.2167
+      objectReference: {fileID: 0}
+    - target: {fileID: 5004965414425030035, guid: b32d745895ee67d49983ec4bdbefc860, type: 3}
       propertyPath: transitionTime
+      value: 0.2167
+      objectReference: {fileID: 0}
+    - target: {fileID: 5004965414425030035, guid: b32d745895ee67d49983ec4bdbefc860, type: 3}
+      propertyPath: sceneWarmupTime
+      value: 0.2167
+      objectReference: {fileID: 0}
+    - target: {fileID: 5004965414425030035, guid: b32d745895ee67d49983ec4bdbefc860, type: 3}
+      propertyPath: entryTransitionTime
+      value: 0.2167
+      objectReference: {fileID: 0}
+    - target: {fileID: 5004965414425030035, guid: b32d745895ee67d49983ec4bdbefc860, type: 3}
+      propertyPath: maximumTransitionWait
       value: 0.2167
       objectReference: {fileID: 0}
     - target: {fileID: 6723774877640322317, guid: b32d745895ee67d49983ec4bdbefc860, type: 3}

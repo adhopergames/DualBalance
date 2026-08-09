@@ -7,87 +7,200 @@ public enum GameState
     Playing,
     Tutorial,
     Paused,
-    GameOver,        // Final definitivo
-    GameOverPending  // Perdió, pero puede revivir con anuncio
+    GameOver,
+    GameOverPending
 }
 
 public class GameManager : MonoBehaviour
 {
     public static GameManager Instance { get; private set; }
 
+    // ============================================================
+    // CONFIG
+    // ============================================================
+
     [Header("Config")]
-    [Tooltip("ScriptableObject con parámetros de dificultad, spawn, energía, etc.")]
+    [Tooltip(
+        "ScriptableObject con parámetros de dificultad, " +
+        "spawn, energía, etc."
+    )]
     public GameConfig config;
+
+    // ============================================================
+    // STATE
+    // ============================================================
 
     [Header("State")]
     [Tooltip("Estado actual del juego.")]
-    public GameState State { get; private set; } = GameState.Playing;
+    public GameState State { get; private set; } =
+        GameState.Playing;
+
+    // ============================================================
+    // SCORE
+    // ============================================================
 
     [Header("Score")]
-    [Tooltip("Cuántos puntos gana el jugador por segundo.")]
+
+    [Tooltip(
+        "Cuántos puntos gana el jugador por segundo."
+    )]
     public float scorePerSecond = 10f;
 
-    [Tooltip("Score actual (se incrementa en runtime).")]
+    [Tooltip(
+        "Score actual de la run."
+    )]
     public float Score { get; private set; }
 
-    [Tooltip("Tiempo transcurrido desde que empezó la partida (para dificultad).")]
+    [Tooltip(
+        "Tiempo transcurrido desde que empezó la run."
+    )]
     public float ElapsedTime { get; private set; }
 
-    [Header("Level Loader (en esta escena)")]
-    [SerializeField] private LevelLoader levelLoader;
+    // ============================================================
+    // EVENTS
+    // ============================================================
 
-    // Evento para UI cuando hay GameOver FINAL:
-    // (scoreFinalInt, bestScoreInt, isNewRecord)
-    public event Action<int, int, bool> OnGameOver;
+    /*
+     * Game Over FINAL:
+     *
+     * scoreFinalInt
+     * bestScoreInt
+     * isNewRecord
+     */
+    public event Action<int, int, bool>
+        OnGameOver;
 
-    // Evento para UI cuando hay GameOver PENDING (con opción de continue):
-    // (scoreNowInt, bestScoreInt, canContinue, isNewRecordNow)
-    public event Action<int, int, bool, bool> OnGameOverPending;
+    /*
+     * Game Over PENDING:
+     *
+     * scoreNowInt
+     * bestScoreInt
+     * canContinue
+     * isNewRecordNow
+     */
+    public event Action<int, int, bool, bool>
+        OnGameOverPending;
 
-    // Evento para UI cuando el jugador revive (para ocultar panel, etc.)
+    /*
+     * UI utiliza este evento para esconder el panel
+     * cuando el jugador revive.
+     */
     public event Action OnRevive;
 
-    [Header("Revive References (asignar en Inspector)")]
-    [Tooltip("Referencia al PlayerEnergy del jugador.")]
+    // ============================================================
+    // REVIVE REFERENCES
+    // ============================================================
+
+    [Header("Revive References")]
+
+    [Tooltip(
+        "Referencia al PlayerEnergy."
+    )]
     public PlayerEnergy playerEnergy;
 
-    [Tooltip("Referencia al PlayerMovement del jugador.")]
+    [Tooltip(
+        "Referencia al PlayerMovement."
+    )]
     public PlayerMovement playerMovement;
 
-    [Tooltip("Transform del jugador (para restaurar posición X).")]
+    [Tooltip(
+        "Transform del jugador."
+    )]
     public Transform playerTransform;
 
+    // ============================================================
+    // REVIVE SETTINGS
+    // ============================================================
+
     [Header("Revive Settings")]
-    [Tooltip("Cuántas veces se puede revivir por partida (recomendado 1).")]
+
+    [Tooltip(
+        "Cantidad máxima de continues por run."
+    )]
     public int maxContinuesPerRun = 1;
 
-    [Tooltip("Radio vertical base (unidades) para limpiar peligros al revivir.")]
+    [Tooltip(
+        "Radio vertical para limpiar peligros al revivir."
+    )]
     public float reviveClearRangeY = 8f;
 
     [Header("Revive Grace Period")]
-    [Tooltip("Segundos de invencibilidad tras revivir.")]
+
+    [Tooltip(
+        "Segundos de invencibilidad después de revivir."
+    )]
     public float reviveInvulnerabilitySeconds = 2.5f;
 
-    /// True mientras el jugador está protegido tras revivir.
-    /// Úsalo en el script de colisiones para NO morir durante este tiempo.
-    public bool IsReviveInvulnerable { get; private set; }
+    public bool IsReviveInvulnerable
+    {
+        get;
+        private set;
+    }
 
-    // Controla si ya se usó el continue en esta run
-    private int continuesUsed = 0;
+    /*
+     * Cantidad de continues utilizados en esta run.
+     */
+    private int continuesUsed;
 
-    // Snapshot en memoria para revivir (no se guarda en PlayerPrefs)
+    /*
+     * True si el jugador realmente utilizó un Rewarded
+     * para revivir durante esta run.
+     *
+     * Se utiliza también para evitar mostrar
+     * inmediatamente un Interstitial.
+     */
+    private bool rewardedUsedThisRun;
+
+    // ============================================================
+    // AD RUN TRACKING
+    // ============================================================
+
+    /*
+     * Evita contar dos veces la misma run.
+     *
+     * Ejemplo:
+     *
+     * muere
+     * → se registra run
+     * → mira Rewarded
+     * → revive
+     * → vuelve a morir
+     *
+     * Sigue siendo UNA sola run.
+     */
+    private bool runRegisteredForAds;
+
+    // ============================================================
+    // SNAPSHOT
+    // ============================================================
+
     private RunSnapshot snapshot;
     private bool hasSnapshot;
 
+    // ============================================================
+    // SCORE MULTIPLIER
+    // ============================================================
+
     [Header("Score Multiplier (Orbs)")]
-    [Tooltip("Multiplicador actual aplicado al score por segundo. 1 = normal.")]
-    [SerializeField] private float scoreMultiplier = 1f;
 
-    [Tooltip("Tiempo restante (segundos) del multiplicador actual.")]
-    [SerializeField] private float scoreMultiplierRemaining = 0f;
+    [Tooltip(
+        "Multiplicador actual del score. 1 = normal."
+    )]
+    [SerializeField]
+    private float scoreMultiplier = 1f;
 
-    // Evento opcional para UI si quieres mostrar información del buff
-    public event Action<float, float> OnScoreMultiplierChanged; // (mult, remaining)
+    [Tooltip(
+        "Tiempo restante del multiplicador."
+    )]
+    [SerializeField]
+    private float scoreMultiplierRemaining = 0f;
+
+    public event Action<float, float>
+        OnScoreMultiplierChanged;
+
+    // ============================================================
+    // SNAPSHOT STRUCT
+    // ============================================================
 
     [Serializable]
     private struct RunSnapshot
@@ -102,148 +215,333 @@ public class GameManager : MonoBehaviour
         public float playerX;
     }
 
+    // ============================================================
+    // UNITY
+    // ============================================================
+
     private void Awake()
     {
-        // -------------------------
-        // Singleton seguro
-        // -------------------------
+        // --------------------------------------------------------
+        // Singleton
+        // --------------------------------------------------------
+
         if (Instance != null && Instance != this)
         {
             Destroy(gameObject);
             return;
         }
+
         Instance = this;
 
-        // -------------------------
-        // Seguridad al cargar escena
-        // -------------------------
-        Time.timeScale = 1f;
-        State = GameState.Playing;
+        // --------------------------------------------------------
+        // Estado inicial
+        // --------------------------------------------------------
 
-        // -------------------------
-        // Reset de stats POR RUN
-        // -------------------------
-        // ✅ Importante: esto NO borra PlayerPrefs, solo contadores temporales de la partida.
+        Time.timeScale = 1f;
+
+        State =
+            GameState.Playing;
+
+        // --------------------------------------------------------
+        // Stats temporales
+        // --------------------------------------------------------
+
         StatsManager.ResetRunStats();
 
-        // -------------------------
-        // Reset de run (Retry / volver a jugar)
-        // -------------------------
+        // --------------------------------------------------------
+        // Reset de nueva run
+        // --------------------------------------------------------
+
         continuesUsed = 0;
+
+        rewardedUsedThisRun = false;
+
+        runRegisteredForAds = false;
+
         hasSnapshot = false;
+
         IsReviveInvulnerable = false;
     }
 
     private void Update()
     {
-        // Solo avanzamos score/tiempo mientras se juega
-        if (State != GameState.Playing) return;
+        /*
+         * Score y dificultad solo avanzan mientras
+         * realmente estamos jugando.
+         */
+        if (State != GameState.Playing)
+            return;
 
-        ElapsedTime += Time.deltaTime;
+        ElapsedTime +=
+            Time.deltaTime;
 
-        // ✅ Si hay multiplicador activo, reducimos el tiempo restante
+        // --------------------------------------------------------
+        // Score multiplier
+        // --------------------------------------------------------
+
         if (scoreMultiplierRemaining > 0f)
         {
-            scoreMultiplierRemaining -= Time.deltaTime;
+            scoreMultiplierRemaining -=
+                Time.deltaTime;
 
             if (scoreMultiplierRemaining <= 0f)
             {
                 scoreMultiplierRemaining = 0f;
                 scoreMultiplier = 1f;
-                OnScoreMultiplierChanged?.Invoke(scoreMultiplier, scoreMultiplierRemaining);
+
+                OnScoreMultiplierChanged?.Invoke(
+                    scoreMultiplier,
+                    scoreMultiplierRemaining
+                );
             }
         }
 
-        // ✅ Score por segundo * multiplicador actual
-        Score += scorePerSecond * scoreMultiplier * Time.deltaTime;
+        Score +=
+            scorePerSecond *
+            scoreMultiplier *
+            Time.deltaTime;
     }
 
-    /// Velocidad actual del mundo (aumenta con el tiempo y se limita por maxWorldSpeed).
+    // ============================================================
+    // DIFFICULTY
+    // ============================================================
+
     public float CurrentWorldSpeed
     {
         get
         {
-            float speed = config.baseWorldSpeed + (ElapsedTime * config.difficultyRamp);
-            return Mathf.Min(speed, config.maxWorldSpeed);
+            float speed =
+                config.baseWorldSpeed +
+                (
+                    ElapsedTime *
+                    config.difficultyRamp
+                );
+
+            return Mathf.Min(
+                speed,
+                config.maxWorldSpeed
+            );
         }
     }
 
-    /// Intervalo de spawn que se reduce con el tiempo y se limita por minSpawnInterval.
     public float CurrentSpawnInterval
     {
         get
         {
-            float interval = config.baseSpawnInterval - (ElapsedTime * config.spawnIntervalRamp);
-            return Mathf.Max(config.minSpawnInterval, interval);
+            float interval =
+                config.baseSpawnInterval -
+                (
+                    ElapsedTime *
+                    config.spawnIntervalRamp
+                );
+
+            return Mathf.Max(
+                config.minSpawnInterval,
+                interval
+            );
         }
     }
 
-    /// Entra al estado Tutorial.
-    /// Se congela el gameplay, pero la UI del tutorial sigue funcionando.
+    // ============================================================
+    // TUTORIAL
+    // ============================================================
+
+    /// <summary>
+    /// Congela el gameplay mientras el tutorial está visible.
+    /// </summary>
     public void EnterTutorial()
     {
-        // No entrar en tutorial desde estados finales
-        if (State == GameState.GameOver || State == GameState.GameOverPending) return;
+        if (
+            State == GameState.GameOver ||
+            State == GameState.GameOverPending
+        )
+        {
+            return;
+        }
 
-        State = GameState.Tutorial;
+        State =
+            GameState.Tutorial;
+
         Time.timeScale = 0f;
     }
 
-    /// Finaliza el tutorial y comienza el gameplay normal.
+    /// <summary>
+    /// Finaliza el tutorial y comienza el gameplay.
+    /// </summary>
     public void FinishTutorial()
     {
-        State = GameState.Playing;
+        State =
+            GameState.Playing;
+
         Time.timeScale = 1f;
     }
 
-    /// Llamar esto cuando el jugador pierde.
+    // ============================================================
+    // GAME OVER
+    // ============================================================
+
+    /// <summary>
+    /// Punto de entrada cuando el jugador pierde.
+    /// </summary>
     public void TriggerGameOver()
     {
-        // ✅ Si no estamos jugando, ignoramos triggers extra.
-        if (State != GameState.Playing) return;
+        if (State != GameState.Playing)
+            return;
 
-        if (continuesUsed < maxContinuesPerRun)
+        /*
+         * Una run se registra UNA sola vez para
+         * el contador del Interstitial.
+         */
+        RegisterRunForAdsIfNeeded();
+
+        if (
+            continuesUsed <
+            maxContinuesPerRun
+        )
+        {
             EnterGameOverPending();
+        }
         else
+        {
             GameOverFinal();
+        }
     }
 
-    /// Entra en estado GameOverPending.
+    /// <summary>
+    /// Registra la run para el sistema periódico de anuncios.
+    ///
+    /// Aunque posteriormente el jugador reviva,
+    /// no volverá a incrementar el contador.
+    /// </summary>
+    private void RegisterRunForAdsIfNeeded()
+    {
+        if (runRegisteredForAds)
+            return;
+
+        runRegisteredForAds = true;
+
+        AdManager.Instance?.RegisterCompletedRun();
+    }
+
+    // ============================================================
+    // GAME OVER PENDING
+    // ============================================================
+
+    /// <summary>
+    /// El jugador perdió pero todavía puede utilizar
+    /// el Rewarded para continuar.
+    /// </summary>
     private void EnterGameOverPending()
     {
-        State = GameState.GameOverPending;
+        State =
+            GameState.GameOverPending;
+
         Time.timeScale = 0f;
+
+        /*
+         * Bajamos la música mientras estamos
+         * en Game Over.
+         */
+        AudioManager.Instance
+            ?.SetGameOverMusicEffect(true);
 
         SaveSnapshot();
 
-        int scoreNowInt = Mathf.RoundToInt(Score);
-        int prevBest = SaveManager.GetBestScore();
-        bool isNewRecordNow = scoreNowInt > prevBest;
+        int scoreNowInt =
+            Mathf.RoundToInt(Score);
 
-        SaveManager.TrySetBestScore(scoreNowInt);
-        int bestNow = SaveManager.GetBestScore();
+        int previousBest =
+            SaveManager.GetBestScore();
 
-        OnGameOverPending?.Invoke(scoreNowInt, bestNow, true, isNewRecordNow);
+        bool isNewRecordNow =
+            scoreNowInt >
+            previousBest;
+
+        SaveManager.TrySetBestScore(
+            scoreNowInt
+        );
+
+        int bestNow =
+            SaveManager.GetBestScore();
+
+        OnGameOverPending?.Invoke(
+            scoreNowInt,
+            bestNow,
+            true,
+            isNewRecordNow
+        );
     }
 
-    /// GameOver FINAL.
+    // ============================================================
+    // FINAL GAME OVER
+    // ============================================================
+
+    /// <summary>
+    /// Game Over definitivo.
+    /// </summary>
     private void GameOverFinal()
     {
-        State = GameState.GameOver;
+        /*
+         * Por seguridad, si llegamos aquí sin haber
+         * registrado todavía la run, lo hacemos.
+         */
+        RegisterRunForAdsIfNeeded();
+
+        State =
+            GameState.GameOver;
+
         Time.timeScale = 1f;
 
-        int finalScoreInt = Mathf.RoundToInt(Score);
-        bool isNewRecord = SaveManager.TrySetBestScore(finalScoreInt);
-        int best = SaveManager.GetBestScore();
+        AudioManager.Instance
+            ?.SetGameOverMusicEffect(true);
 
-        OnGameOver?.Invoke(finalScoreInt, best, isNewRecord);
+        int finalScoreInt =
+            Mathf.RoundToInt(Score);
+
+        bool isNewRecord =
+            SaveManager.TrySetBestScore(
+                finalScoreInt
+            );
+
+        int best =
+            SaveManager.GetBestScore();
+
+        OnGameOver?.Invoke(
+            finalScoreInt,
+            best,
+            isNewRecord
+        );
+
         StatsManager.AddRun();
     }
 
-    /// Se llama cuando el anuncio rewarded se completa.
+    // ============================================================
+    // REWARDED CONTINUE
+    // ============================================================
+
+    /// <summary>
+    /// Se llama DESPUÉS de que:
+    ///
+    /// 1. Google concedió la recompensa.
+    /// 2. El anuncio Rewarded fue cerrado completamente.
+    /// </summary>
     public void ContinueAfterAd()
     {
-        if (State != GameState.GameOverPending) return;
+        if (
+            State !=
+            GameState.GameOverPending
+        )
+        {
+            return;
+        }
+
+        /*
+         * Marcamos inmediatamente que esta run
+         * ya utilizó Rewarded.
+         *
+         * Esto impedirá un Interstitial al finalizarla.
+         */
+        rewardedUsedThisRun = true;
 
         if (!hasSnapshot)
         {
@@ -252,155 +550,506 @@ public class GameManager : MonoBehaviour
         }
 
         continuesUsed++;
+
         Time.timeScale = 1f;
 
-        Score = snapshot.score;
-        ElapsedTime = snapshot.elapsedTime;
+        // --------------------------------------------------------
+        // Restaurar score / tiempo
+        // --------------------------------------------------------
 
-        // ✅ Al revivir, dejamos el score multiplier en normal
+        Score =
+            snapshot.score;
+
+        ElapsedTime =
+            snapshot.elapsedTime;
+
+        // --------------------------------------------------------
+        // Reset score multiplier
+        // --------------------------------------------------------
+
         scoreMultiplier = 1f;
+
         scoreMultiplierRemaining = 0f;
-        OnScoreMultiplierChanged?.Invoke(scoreMultiplier, scoreMultiplierRemaining);
 
-        playerEnergy.lightEnergy = snapshot.lightEnergy;
-        playerEnergy.darkEnergy = snapshot.darkEnergy;
+        OnScoreMultiplierChanged?.Invoke(
+            scoreMultiplier,
+            scoreMultiplierRemaining
+        );
 
-        playerMovement.currentLane = snapshot.currentLane;
+        // --------------------------------------------------------
+        // Restaurar energía
+        // --------------------------------------------------------
 
-        Vector3 p = playerTransform.position;
-        playerTransform.position = new Vector3(snapshot.playerX, p.y, p.z);
+        if (playerEnergy != null)
+        {
+            playerEnergy.lightEnergy =
+                snapshot.lightEnergy;
+
+            playerEnergy.darkEnergy =
+                snapshot.darkEnergy;
+        }
+
+        // --------------------------------------------------------
+        // Restaurar lane
+        // --------------------------------------------------------
+
+        if (playerMovement != null)
+        {
+            playerMovement.currentLane =
+                snapshot.currentLane;
+        }
+
+        // --------------------------------------------------------
+        // Restaurar posición
+        // --------------------------------------------------------
+
+        if (playerTransform != null)
+        {
+            Vector3 position =
+                playerTransform.position;
+
+            playerTransform.position =
+                new Vector3(
+                    snapshot.playerX,
+                    position.y,
+                    position.z
+                );
+        }
+
+        // --------------------------------------------------------
+        // Crear zona segura
+        // --------------------------------------------------------
 
         ClearNearbyHazards();
 
-        IsReviveInvulnerable = true;
-        StartCoroutine(ReviveInvulnerabilityRoutine());
+        // --------------------------------------------------------
+        // Invencibilidad temporal
+        // --------------------------------------------------------
 
-        State = GameState.Playing;
+        IsReviveInvulnerable = true;
+
+        StartCoroutine(
+            ReviveInvulnerabilityRoutine()
+        );
+
+        // --------------------------------------------------------
+        // Restaurar música
+        // --------------------------------------------------------
+
+        AudioManager.Instance
+            ?.SetGameOverMusicEffect(false);
+
+        // --------------------------------------------------------
+        // Volver al gameplay
+        // --------------------------------------------------------
+
+        State =
+            GameState.Playing;
+
         OnRevive?.Invoke();
     }
 
-    /// Guarda snapshot mínimo para poder revivir.
+    // ============================================================
+    // SAVE SNAPSHOT
+    // ============================================================
+
+    /// <summary>
+    /// Guarda la información mínima necesaria
+    /// para poder revivir al jugador.
+    /// </summary>
     private void SaveSnapshot()
     {
-        if (playerEnergy == null || playerMovement == null || playerTransform == null)
+        if (
+            playerEnergy == null ||
+            playerMovement == null ||
+            playerTransform == null
+        )
         {
-            Debug.LogWarning("GameManager: faltan referencias (playerEnergy/playerMovement/playerTransform). No se guardó snapshot.");
+            Debug.LogWarning(
+                "GameManager: faltan referencias " +
+                "(playerEnergy/playerMovement/playerTransform). " +
+                "No se guardó snapshot."
+            );
+
             hasSnapshot = false;
+
             return;
         }
 
-        snapshot = new RunSnapshot
-        {
-            score = Score,
-            elapsedTime = ElapsedTime,
-            lightEnergy = playerEnergy.lightEnergy,
-            darkEnergy = playerEnergy.darkEnergy,
-            currentLane = playerMovement.currentLane,
-            playerX = playerTransform.position.x
-        };
+        snapshot =
+            new RunSnapshot
+            {
+                score =
+                    Score,
+
+                elapsedTime =
+                    ElapsedTime,
+
+                lightEnergy =
+                    playerEnergy.lightEnergy,
+
+                darkEnergy =
+                    playerEnergy.darkEnergy,
+
+                currentLane =
+                    playerMovement.currentLane,
+
+                playerX =
+                    playerTransform.position.x
+            };
 
         hasSnapshot = true;
     }
 
-    /// Invencibilidad temporal tras revivir.
-    private System.Collections.IEnumerator ReviveInvulnerabilityRoutine()
+    // ============================================================
+    // REVIVE INVULNERABILITY
+    // ============================================================
+
+    private System.Collections.IEnumerator
+        ReviveInvulnerabilityRoutine()
     {
         IsReviveInvulnerable = true;
-        yield return new WaitForSecondsRealtime(reviveInvulnerabilitySeconds);
+
+        yield return
+            new WaitForSecondsRealtime(
+                reviveInvulnerabilitySeconds
+            );
+
         IsReviveInvulnerable = false;
     }
 
-    /// Limpia obstáculos/paredes cerca del jugador (zona segura).
+    // ============================================================
+    // CLEAR HAZARDS
+    // ============================================================
+
+    /// <summary>
+    /// Limpia peligros cercanos después del revive
+    /// para evitar morir inmediatamente otra vez.
+    /// </summary>
     private void ClearNearbyHazards()
     {
-        if (playerTransform == null) return;
+        if (playerTransform == null)
+            return;
 
-        float py = playerTransform.position.y;
-        float dynamicRange = reviveClearRangeY + (CurrentWorldSpeed * 1.0f);
+        float playerY =
+            playerTransform.position.y;
 
-        // 1) Paredes elementales
-        var walls = FindObjectsByType<ElementalWall>(FindObjectsSortMode.None);
-        foreach (var w in walls)
+        float dynamicRange =
+            reviveClearRangeY +
+            (
+                CurrentWorldSpeed *
+                1f
+            );
+
+        // --------------------------------------------------------
+        // Elemental Walls
+        // --------------------------------------------------------
+
+        ElementalWall[] walls =
+            FindObjectsByType<ElementalWall>(
+                FindObjectsSortMode.None
+            );
+
+        foreach (
+            ElementalWall wall
+            in walls
+        )
         {
-            if (w == null) continue;
+            if (wall == null)
+                continue;
 
-            float dy = Mathf.Abs(w.transform.position.y - py);
-            if (dy <= dynamicRange)
-                Destroy(w.gameObject);
+            float distanceY =
+                Mathf.Abs(
+                    wall.transform.position.y -
+                    playerY
+                );
+
+            if (
+                distanceY <=
+                dynamicRange
+            )
+            {
+                Destroy(
+                    wall.gameObject
+                );
+            }
         }
 
-        // 2) Objetos que caen (obstáculos)
-        var falling = FindObjectsByType<FallingObject>(FindObjectsSortMode.None);
-        foreach (var f in falling)
+        // --------------------------------------------------------
+        // Falling objects
+        // --------------------------------------------------------
+
+        FallingObject[] fallingObjects =
+            FindObjectsByType<FallingObject>(
+                FindObjectsSortMode.None
+            );
+
+        foreach (
+            FallingObject falling
+            in fallingObjects
+        )
         {
-            if (f == null) continue;
+            if (falling == null)
+                continue;
 
-            // Si es un orbe, NO lo borramos
-            if (f.GetComponent<Orb>() != null) continue;
+            /*
+             * Los orbes NO se eliminan.
+             */
+            if (
+                falling.GetComponent<Orb>() !=
+                null
+            )
+            {
+                continue;
+            }
 
-            float dy = Mathf.Abs(f.transform.position.y - py);
-            if (dy <= dynamicRange)
-                Destroy(f.gameObject);
+            float distanceY =
+                Mathf.Abs(
+                    falling.transform.position.y -
+                    playerY
+                );
+
+            if (
+                distanceY <=
+                dynamicRange
+            )
+            {
+                Destroy(
+                    falling.gameObject
+                );
+            }
         }
     }
 
-    /// Reinicia la escena actual (Retry).
+    // ============================================================
+    // RESTART
+    // ============================================================
+
+    /// <summary>
+    /// Reinicia la run.
+    ///
+    /// Si corresponde un Interstitial:
+    ///
+    /// 1. Esperamos a que cierre.
+    /// 2. Después reiniciamos.
+    ///
+    /// Si esta run utilizó Rewarded,
+    /// el Interstitial será omitido.
+    /// </summary>
     public void Restart()
     {
+        /*
+         * Solo consideramos una run terminada para mostrar
+         * Interstitial si ya ocurrió Game Over.
+         *
+         * Reiniciar manualmente desde pausa no dispara anuncio.
+         */
+        bool finishedRun =
+            runRegisteredForAds &&
+            (
+                State ==
+                GameState.GameOverPending ||
+
+                State ==
+                GameState.GameOver
+            );
+
+        if (
+            finishedRun &&
+            AdManager.Instance != null
+        )
+        {
+            /*
+             * Congelamos todo mientras AdManager decide
+             * si debe mostrar el anuncio.
+             */
+            Time.timeScale = 0f;
+
+            AdManager.Instance
+                .TryShowInterstitialIfDue(
+                    rewardedUsedThisRun,
+                    ReloadCurrentSceneNow
+                );
+
+            return;
+        }
+
+        /*
+         * Reinicio normal.
+         */
+        ReloadCurrentSceneNow();
+    }
+
+    /// <summary>
+    /// Realiza realmente la recarga de Game.
+    ///
+    /// Este método puede ejecutarse:
+    /// - inmediatamente;
+    /// - o después de cerrar un Interstitial.
+    /// </summary>
+    private void ReloadCurrentSceneNow()
+    {
         Time.timeScale = 1f;
+
+        // --------------------------------------------------------
+        // Restaurar cualquier efecto temporal de audio.
+        // --------------------------------------------------------
+
+        AudioManager.Instance
+            ?.ResetMusicStateImmediate();
+
+        AudioManager.Instance
+            ?.ResetGameOverMusicImmediate();
+
         StatsManager.ResetRunStats();
 
-        if (levelLoader != null)
-            levelLoader.ReloadCurrentScene();
+        // --------------------------------------------------------
+        // Utilizar el LevelLoader persistente.
+        // --------------------------------------------------------
+
+        if (LevelLoader.Instance != null)
+        {
+            LevelLoader.Instance
+                .ReloadCurrentScene();
+        }
         else
-            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+        {
+            SceneManager.LoadScene(
+                SceneManager
+                    .GetActiveScene()
+                    .buildIndex
+            );
+        }
     }
 
-    /// Toggle para UI (Button.onClick) - SIN parámetros
+    // ============================================================
+    // PAUSE
+    // ============================================================
+
+    /// <summary>
+    /// Alterna pausa/reanudar desde la UI.
+    /// </summary>
     public void TogglePause()
     {
-        // No permitimos pausar en estados finales ni durante tutorial
-        if (State == GameState.GameOver || State == GameState.GameOverPending || State == GameState.Tutorial)
+        if (
+            State == GameState.GameOver ||
+            State == GameState.GameOverPending ||
+            State == GameState.Tutorial
+        )
+        {
             return;
+        }
 
-        bool shouldPause = State != GameState.Paused;
-        Pause(shouldPause);
+        bool shouldPause =
+            State != GameState.Paused;
+
+        Pause(
+            shouldPause
+        );
     }
 
-    /// Pausa o reanuda el juego (modo correcto)
-    public void Pause(bool paused)
+    /// <summary>
+    /// Aplica o elimina la pausa.
+    ///
+    /// También controla el efecto Low Pass
+    /// de la música.
+    /// </summary>
+    public void Pause(
+        bool paused
+    )
     {
-        // No permitimos que una lógica externa "despause" durante tutorial
-        if (State == GameState.Tutorial && !paused)
+        /*
+         * No permitimos que otro sistema quite
+         * accidentalmente la pausa del tutorial.
+         */
+        if (
+            State == GameState.Tutorial &&
+            !paused
+        )
+        {
             return;
+        }
 
         if (paused)
         {
-            State = GameState.Paused;
+            State =
+                GameState.Paused;
+
             Time.timeScale = 0f;
+
+            AudioManager.Instance
+                ?.SetPauseMusicEffect(true);
         }
         else
         {
-            State = GameState.Playing;
+            State =
+                GameState.Playing;
+
             Time.timeScale = 1f;
+
+            AudioManager.Instance
+                ?.SetPauseMusicEffect(false);
         }
     }
 
-    /// Activa un multiplicador temporal de score.
-    public void ApplyScoreMultiplier(float multiplier, float durationSeconds)
+    // ============================================================
+    // SCORE MULTIPLIER
+    // ============================================================
+
+    /// <summary>
+    /// Activa o renueva un multiplicador temporal
+    /// de puntuación.
+    /// </summary>
+    public void ApplyScoreMultiplier(
+        float multiplier,
+        float durationSeconds
+    )
     {
-        if (multiplier <= 1f || durationSeconds <= 0f) return;
-
-        if (multiplier > scoreMultiplier)
+        if (
+            multiplier <= 1f ||
+            durationSeconds <= 0f
+        )
         {
-            scoreMultiplier = multiplier;
-            scoreMultiplierRemaining = durationSeconds;
-        }
-        else if (Mathf.Approximately(multiplier, scoreMultiplier))
-        {
-            scoreMultiplierRemaining = durationSeconds;
+            return;
         }
 
-        OnScoreMultiplierChanged?.Invoke(scoreMultiplier, scoreMultiplierRemaining);
+        if (
+            multiplier >
+            scoreMultiplier
+        )
+        {
+            scoreMultiplier =
+                multiplier;
+
+            scoreMultiplierRemaining =
+                durationSeconds;
+        }
+        else if (
+            Mathf.Approximately(
+                multiplier,
+                scoreMultiplier
+            )
+        )
+        {
+            scoreMultiplierRemaining =
+                durationSeconds;
+        }
+
+        OnScoreMultiplierChanged?.Invoke(
+            scoreMultiplier,
+            scoreMultiplierRemaining
+        );
+    }
+
+    // ============================================================
+    // DESTROY
+    // ============================================================
+
+    private void OnDestroy()
+    {
+        if (Instance == this)
+        {
+            Instance = null;
+        }
     }
 }
