@@ -650,6 +650,156 @@ public class GameManager : MonoBehaviour
     }
 
     // ============================================================
+    // PC FREE CONTINUE
+    // ============================================================
+
+    /// <summary>
+    /// Continue gratuito exclusivo de la interfaz de PC.
+    ///
+    /// IMPORTANTE:
+    /// - No utiliza AdMob.
+    /// - Consume el mismo límite de continues de la run.
+    /// - Con maxContinuesPerRun = 1, solo puede usarse una vez.
+    /// - NO modifica el comportamiento de ContinueAfterAd() en móvil.
+    /// </summary>
+    public void ContinueFreeOnPC()
+    {
+        // Solo tiene sentido desde GameOverPending.
+        if (State != GameState.GameOverPending)
+            return;
+
+        // Seguridad: no permitir más continues de los configurados.
+        if (continuesUsed >= maxContinuesPerRun)
+            return;
+
+        /*
+         * Si no existe snapshot no podemos restaurar la partida.
+         * En ese caso terminamos la run normalmente.
+         */
+        if (!hasSnapshot)
+        {
+            GameOverFinal();
+            return;
+        }
+
+        // Consumimos el continue gratuito.
+        continuesUsed++;
+
+        Time.timeScale = 1f;
+
+        // --------------------------------------------------------
+        // Restaurar score y tiempo
+        // --------------------------------------------------------
+
+        Score = snapshot.score;
+        ElapsedTime = snapshot.elapsedTime;
+
+        // --------------------------------------------------------
+        // Reset del multiplicador de puntuación
+        // --------------------------------------------------------
+
+        scoreMultiplier = 1f;
+        scoreMultiplierRemaining = 0f;
+
+        OnScoreMultiplierChanged?.Invoke(
+            scoreMultiplier,
+            scoreMultiplierRemaining
+        );
+
+        // --------------------------------------------------------
+        // Restaurar energía
+        // --------------------------------------------------------
+
+        if (playerEnergy != null)
+        {
+            playerEnergy.lightEnergy =
+                snapshot.lightEnergy;
+
+            playerEnergy.darkEnergy =
+                snapshot.darkEnergy;
+        }
+
+        // --------------------------------------------------------
+        // Restaurar carril
+        // --------------------------------------------------------
+
+        if (playerMovement != null)
+        {
+            playerMovement.currentLane =
+                snapshot.currentLane;
+        }
+
+        // --------------------------------------------------------
+        // Restaurar posición X
+        // --------------------------------------------------------
+
+        if (playerTransform != null)
+        {
+            Vector3 position =
+                playerTransform.position;
+
+            playerTransform.position =
+                new Vector3(
+                    snapshot.playerX,
+                    position.y,
+                    position.z
+                );
+        }
+
+        // --------------------------------------------------------
+        // Crear zona segura alrededor del jugador
+        // --------------------------------------------------------
+
+        ClearNearbyHazards();
+
+        // --------------------------------------------------------
+        // Invencibilidad temporal
+        // --------------------------------------------------------
+
+        IsReviveInvulnerable = true;
+
+        StartCoroutine(
+            ReviveInvulnerabilityRoutine()
+        );
+
+        // --------------------------------------------------------
+        // Restaurar música después del Game Over
+        // --------------------------------------------------------
+
+        AudioManager.Instance
+            ?.SetGameOverMusicEffect(false);
+
+        // --------------------------------------------------------
+        // Volver al gameplay
+        // --------------------------------------------------------
+
+        State = GameState.Playing;
+
+        OnRevive?.Invoke();
+
+        Debug.Log(
+            "GameManager: continue gratuito de PC utilizado."
+        );
+    }
+
+
+    // ============================================================
+    // PC RESTART
+    // ============================================================
+
+    /// <summary>
+    /// Reinicia directamente la run SIN consultar AdMob.
+    ///
+    /// Este método existe únicamente para la interfaz de PC.
+    /// El Restart() normal de móvil permanece intacto y sigue
+    /// controlando los Interstitials.
+    /// </summary>
+    public void RestartWithoutAds()
+    {
+        ReloadCurrentSceneNow();
+    }
+
+    // ============================================================
     // SAVE SNAPSHOT
     // ============================================================
 

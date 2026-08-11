@@ -3654,7 +3654,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 0.35686275, g: 0.48235294, b: 0.69803923, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -5137,7 +5137,7 @@ MonoBehaviour:
     musicSlider: {fileID: 1845041779}
     sfxSlider: {fileID: 1545282984}
   useAutoCanvas: 0
-  forcePCCanvas: 0
+  forcePCCanvas: 1
   backAction: {fileID: 0}
   transitionDuration: 0.25
   slideDistance: 2000
@@ -9520,7 +9520,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!225 &937660780
 CanvasGroup:
   m_ObjectHideFlags: 0
@@ -10941,7 +10941,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &1154005534
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -11807,6 +11807,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::AudioManager
   musicSource: {fileID: 1552026037}
   sfxSource: {fileID: 442069133}
+  musicLowPassFilter: {fileID: 0}
+  pauseMusicVolumeMultiplier: 0.7
+  pauseLowPassCutoff: 1200
+  normalLowPassCutoff: 22000
+  pauseEffectTransitionDuration: 0.2
+  gameOverVolumeMultiplier: 0.35
+  gameOverFadeDuration: 0.35
   menuMusic: {fileID: 8300000, guid: 570cd041d25b07c4b8d831b87ae22d6b, type: 3}
   gameMusic: {fileID: 8300000, guid: 4f39e848e3454d44da8d0b86a76ee141, type: 3}
   menuMusicMultiplier: 1
@@ -16822,7 +16829,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 0.35686275, g: 0.48235294, b: 0.69803923, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
