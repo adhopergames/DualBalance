@@ -652,7 +652,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &75620142
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -758,8 +758,10 @@ MonoBehaviour:
   scoreText: {fileID: 1835499859}
   bestText: {fileID: 212517330}
   newRecordText: {fileID: 1989273844}
+  isPCVersion: 0
   continueButton: {fileID: 1323715767}
   continueButtonLabel: {fileID: 0}
+  pcContinueText: Continuar
   menuSceneName: MainMenu
   pauseButton: {fileID: 1480328780}
   hudRoot: {fileID: 1728354846}
@@ -1811,7 +1813,7 @@ RectTransform:
   m_Father: {fileID: 460668527}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: -2.5, y: 0}
   m_SizeDelta: {x: 5, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
@@ -5556,7 +5558,7 @@ MonoBehaviour:
     m_TableReference:
       m_TableCollectionName: GUID:29f8cc7658e670646904a10b6594754f
     m_TableEntryReference:
-      m_KeyId: 68327594099412992
+      m_KeyId: 68617533571665920
       m_Key: 
     m_FallbackState: 0
     m_WaitForCompletion: 0
@@ -9263,7 +9265,7 @@ MonoBehaviour:
   iosRewardedId: 
   androidInterstitialId: ca-app-pub-7911615200205097/2141458465
   iosInterstitialId: 
-  useTestAds: 1
+  useTestAds: 0
   minRunsBetweenInterstitial: 6
   maxRunsBetweenInterstitial: 7
 --- !u!4 &670993779
@@ -15271,7 +15273,7 @@ RectTransform:
   m_Father: {fileID: 1668438226}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 1, y: 1}
+  m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: -2.5, y: 0}
   m_SizeDelta: {x: 5, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
@@ -16880,7 +16882,7 @@ RectTransform:
   m_Father: {fileID: 641242077}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 1, y: 1}
+  m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: -2.5, y: 0}
   m_SizeDelta: {x: 5, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
@@ -19007,7 +19009,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 54e3f084e4cedcc4cb5254a2b1184cf0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerCombat
-  inputSource: {fileID: 56091943}
+  inputSource: {fileID: 1545923324}
   attackFeedback: {fileID: 1690564212}
 --- !u!114 &1690564202
 MonoBehaviour:
@@ -19022,7 +19024,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerMovement
   laneManager: {fileID: 1649370088}
-  inputSource: {fileID: 56091943}
+  inputSource: {fileID: 1545923324}
   baseMoveSpeed: 18
   useAdaptiveLaneSpeed: 1
   minLaneChangeTime: 0.04
@@ -21785,7 +21787,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &1885127070
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -21947,8 +21949,10 @@ MonoBehaviour:
   scoreText: {fileID: 198576657}
   bestText: {fileID: 1400305441}
   newRecordText: {fileID: 863744058}
+  isPCVersion: 1
   continueButton: {fileID: 672257915}
   continueButtonLabel: {fileID: 0}
+  pcContinueText: Continuar
   menuSceneName: MainMenu
   pauseButton: {fileID: 1464210935}
   hudRoot: {fileID: 2084469589}
@@ -27980,7 +27984,7 @@ RectTransform:
   m_Father: {fileID: 1347969308}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: -2.5, y: 0}
   m_SizeDelta: {x: 5, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
